@@ -1,0 +1,108 @@
+/*outer project row container */
+.project-row {
+    display:flex;
+    justify-content: space-between;
+    gap: 16px;
+    align-items: center;
+}
+
+.project-title-row {
+  display: flex;          /* place name + users side by side */
+  align-items: center;  /* align text like the sketch */
+  gap: 24px;              /* space between name and users */
+}
+
+/*left column name and authorized users  */
+.project-left {
+    flex: 1;
+}
+
+/* middle column  */
+.project-middle {
+    flex:2;
+}
+
+/* right column join leave button*/
+.project-right {
+    display:flex;
+    align-items: center ;
+}
+
+/* spacing between cards */
+.project-card {
+    margin-bottom: 12px;
+}
+
+.project-card.joined {
+    background-color: var(--selected);
+}
+
+/* project name styling */
+.project-name {
+    font-size: 18px;
+    white-space: nowrap; /* prevent name from breaking into multiple lines */
+}
+/* Authorized users styling */
+.project-users {
+    color: var(--secondary);
+    font-size: 14px;
+}
+
+/* join leave button styling */
+.join-btn {
+    width: 120px;
+    height: auto;
+    min-height: 40px;
+}
+
+.project-card {
+    margin-bottom: 12px;
+    width: 100%;
+}
+
+.project-id {
+    font-size: 13px;
+    color: var(--secondary);
+}
+
+
+
+/* media view*/
+@media (max-width: 968px) {
+    .project-row {
+        flex-direction: column;
+        align-items: stretch;
+        gap: 12px;
+    }
+    .project-left, .project-middle, .project-right {
+        flex: unset; /* reset flex for columns */
+        width: 100%; /* make columns full width */
+    }
+
+    .project-right {
+        justify-content: stretch; /* align button to the right */
+    }
+
+    .join-btn {
+        width: 100%; /* make button full width */
+    }
+
+    .project-title-row {
+        flex-direction: column;
+        align-items: stretch;
+        gap: 8px;
+    }
+}
+
+/* mobile view */
+@media (max-width: 480px) {
+    .project-title-row {
+        flex-direction: column;
+        align-items:flex-start;
+        gap: 4px;
+    }
+    .project-name {
+        font-size: 18px;
+    }
+}
+

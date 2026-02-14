@@ -8,23 +8,43 @@ from app.mongo_utils import serialize_doc, to_object_id
 
 bp = Blueprint("projects", __name__)
 
-
+# Collection Helper
 def projects_col() -> Collection:
     return get_db()["projects"]
 
+    """GET / api/projects
 
+    Returns:
+        All projects no user filtering
+        put the userId at top level query
+    """
 @bp.get("")
 def list_projects():
+    """
+    Supports optional filtering:
+    - ?userId=ajw4987
+    - ?ownerUserId=aj
+    - ?projectId=p1"""
+
     # user_id is used to filter projects by assingedUsers and ownerUserId
     user_id = request.args.get("userId") # read userId Filter
-    
-    # TODO: remove old skelton owner_user_id = request.args.get("ownerUserId") # read ownerUserId Filter
+    owner_user_id = request.args.get("ownerUserId") # read ownerUserId Filter
+    project_id = request.args.get("projectId") # read projectId Filter
+
     query = {} # default query
-    # TODO: remove old skelton if owner_user_id:
-    # TODO: remove old skelton after confirmation from team
     #       query = {"ownerUserId": owner_user_id} # if ownerUserId is provided, filter by it
     if user_id:
+        user_id = str(user_id).strip().lower()
         query = {"assignedUsers": user_id} # if userId is provided, filter by it
+
+    if owner_user_id:
+        owner_user_id = str(owner_user_id).strip().lower()
+        query["ownerUserId"] = owner_user_id # if ownerUserId is provided, filter by it
+
+    if project_id:
+        project_id = str(project_id).strip()
+        query["projectId"] = project_id # if projectId is provided, filter by it
+
     docs = [serialize_doc(d) for d in projects_col().find(query).limit(200)]
     return jsonify(docs) # return json list
 
@@ -35,21 +55,20 @@ def create_project():
     if not isinstance(data, dict) or not data:
         return jsonify({"error": "Expected JSON object body"}), 400
 
-    # extract fields 
+    # extract fields
     project_id = data.get("projectId")
     name = data.get("name")
     description = data.get("description")
     owner_user_id = data.get("ownerUserId")
 
     missing_fields = []
-    
+
     if not project_id or not str(project_id).strip(): #validate projectId
         missing_fields.append("projectId")
     if not name or not str(name).strip(): #validate name
         missing_fields.append("name")
     if not description or not str(description).strip(): #validate description
         missing_fields.append("description")
-        
     # validate ownerUserId
     if not owner_user_id or not str(owner_user_id).strip():
         missing_fields.append("ownerUserId")
@@ -61,16 +80,16 @@ def create_project():
         return jsonify({"error": "projectId exists"}), 409
 
     # build project document
-    owner_user_id = str(owner_user_id).strip()
+    owner_user_id = str(owner_user_id).strip().lower() # normalize ownerUserId to lowercase and remove whitespace
 
     doc = {
-           "projectId": str(project_id).strip(),
-           "name": str(name).strip(),
-           "description": str(description).strip(),
-           "ownerUserId": str(owner_user_id).strip(), #ownerUserId is required
-           "assignedUsers": [owner_user_id] # assignedUsers is empty by default
+        "projectId": str(project_id).strip(),
+        "name": str(name).strip(),
+        "description": str(description).strip(),
+        "ownerUserId": str(owner_user_id).strip(), #ownerUserId is required
+        "assignedUsers": [owner_user_id] # assignedUsers is empty by default
         }
-    
+
     if owner_user_id and str(owner_user_id).strip():
         doc["ownerUserId"] = str(owner_user_id).strip()
 
@@ -150,6 +169,8 @@ def join_project(project_id: str):
     if not user_id or not str(user_id).strip():
         return jsonify({"error": "Missing or empty field: userId"}), 400
 
+    user_id = str(user_id).strip().lower() # normalize userId to lowercase and remove whitespace
+
     try:
         _id = to_object_id(project_id)
     except Exception:
@@ -166,27 +187,29 @@ def join_project(project_id: str):
         return jsonify({"error": "Failed to retrieve project"}), 500
     return jsonify(serialize_doc(doc))
 
-# leae project endpoint
+# leave project endpoint
 @bp.post("/<project_id>/leave")
 def leave_project(project_id: str):
     data = request.get_json(silent=True) or {}
     user_id = data.get("userId")
-    
+
     if not user_id or not str(user_id).strip():
         return jsonify({"error": "Missing or empty field: userId"}), 400
-    
+
+    user_id = user_id.lower().strip() # normalize userId to lowercase and remove whitespace
+
     try:
         _id = to_object_id(project_id)
     except Exception:
         return jsonify({"error": "Invalid id"}), 400
-    
+
     res = projects_col().update_one(
         {"_id": _id},
         {"$pull": {"assignedUsers": str(user_id).strip()}})
-    
+
     if res.matched_count == 0:
         return jsonify({"error": "Not found"}), 404
-    
+
     return jsonify({"ok": True}), 200
 
 

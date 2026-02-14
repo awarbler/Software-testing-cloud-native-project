@@ -1,4 +1,4 @@
-import { Link, Outlet } from "react-router";
+import { Link, Outlet, useLocation } from "react-router-dom";
 import AppBar from "@mui/material/AppBar";
 import Box from "@mui/material/Box";
 import Button from "@mui/material/Button";
@@ -10,6 +10,8 @@ import { ProjectProvider } from "../projects/ProjectContext";
 
 export const AppLayout = () => {
   const { isAuthenticated, user, logout } = useAuth();
+  const location = useLocation(); // get current route location
+  const isProjectsPage = location.pathname.startsWith("/projects"); // check if on projects page
 
   return (
     <ProjectProvider>
@@ -23,19 +25,47 @@ export const AppLayout = () => {
         {/* Header AppBar */}
         <AppBar
           position="fixed"
-          sx={{ top: 0, left: 0, right: 0, zIndex: 1200 }}
+          elevation={isProjectsPage ? 0 : 4} // No shadow on projects page, shadow on others
+
+          sx={{ top: 0,
+            left: 0,
+            right: 0,
+            zIndex: 1200,
+            backgroundColor: isProjectsPage ? "#ffffff " : undefined,
+
+            color: isProjectsPage ? "#111827" : undefined,
+            borderBottom: isProjectsPage ? "1px solid #e5e7eb" : undefined,
+
+          }}
         >
           <Toolbar sx={{ justifyContent: "space-between" }}>
             <Box sx={{ display: "flex", gap: 2 }}>
-              <Button color="inherit" component={Link} to="/">
+              {/* Center - Projects page*/}
+              {isProjectsPage && (
+                <Typography
+                variant="h6"
+                sx={{
+                color: isProjectsPage ? "primary.main" : "inherit",
+                fontWeight: isProjectsPage ? 600 : 400,
+              }}
+            >
+              Projects
+            </Typography>
+          )}
+              <Button color="inherit" component={Link} to="/"
+              sx ={{ color: isProjectsPage ? "primary.main" : "inherit"}}
+              >
                 Home
               </Button>
-              <Button color="inherit" component={Link} to="/account">
+              <Button color="inherit" component={Link} to="/account"
+              sx ={{ color: isProjectsPage ? "#374151" : "inherit"}}
+              >
                 Account
               </Button>
             </Box>
 
             {/* Center - App Title */}
+            {!isProjectsPage && (
             <Typography
               variant="h6"
               sx={{
@@ -47,18 +77,21 @@ export const AppLayout = () => {
             >
               Hardware Checkout App
             </Typography>
+          )}
 
             {/* Right side - Auth button */}
             <Box>
               {!isAuthenticated ? (
-                <Button color="inherit" component={Link} to="/auth">
+                <Button color="inherit" component={Link} to="/auth"
+                sx={{ color: isProjectsPage ? "#374151" : "inherit" }}
+                >
                   Sign in
                 </Button>
               ) : (
                 <Button color="inherit" onClick={logout}>
                   Sign out ({user?.userId})
                 </Button>
-              )}
+            )}
             </Box>
           </Toolbar>
         </AppBar>

@@ -1,0 +1,47 @@
+/* Contain for one hwset row*/
+.hw-row {
+    display:flex;
+    align-items: center;
+    gap:12px; /* space between elements */
+    margin-top: 8px;
+}
+
+/* HWSet label and count*/
+.hw-label {
+    min-width: 140px
+}
+.hw-hint {
+    font-size: 12px;
+    color: var(--secondary);
+    margin-top: 4px;
+}
+
+/* wrap the mui input so we can force a consisten width*/
+.hw-qty {
+    width: 140px;
+    min-width: 140px;
+}
+
+/*make two hw buttons the same width */
+.hw-btn {
+    width: 140px;
+    min-width: 140px;
+}
+/* media */
+@media (max-width: 768px) {
+    .hw-row {
+        flex-direction: column;
+        align-items: stretch;
+        gap: 8px;
+    }
+    .hw-label {
+        min-width: unset;
+    }
+    .hw-qty {
+        width: 100%;
+    }
+    .hw-btn {
+        width: 100%;
+    }
+}
+

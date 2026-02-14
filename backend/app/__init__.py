@@ -14,6 +14,8 @@ from .routes.projects import bp as projects_bp
 from .routes.root import bp as root_bp
 from .routes.users import bp as users_bp
 
+from .routes.projects import bp as projects_bp
+
 
 def create_app() -> Flask:
     app = Flask(__name__)
