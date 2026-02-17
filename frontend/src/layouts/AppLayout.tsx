@@ -7,6 +7,16 @@ import Toolbar from "@mui/material/Toolbar";
 import Typography from "@mui/material/Typography";
 import { useAuth } from "../auth";
 
+import { useState } from "react"; // local UI state
+import Drawer from "@mui/material/Drawer"; // slide menu
+import IconButton from "@mui/material/IconButton"; // hamburger button
+import List from "@mui/material/List";
+import ListItem from "@mui/material/ListItem";
+import ListItemButton from "@mui/material/ListItemButton";
+import ListItemText from "@mui/material/ListItemText";
+import MenuIcon from "@mui/icons-material/Menu"; // hamburger icon
+
+
 const activeNavSx = {
   textShadow: "0 0 8px rgba(255,255,255,0.9), 0 0 16px rgba(255,255,255,0.5)",
   fontWeight: 700,
@@ -15,6 +25,11 @@ const activeNavSx = {
 export const AppLayout = () => {
   const { isAuthenticated, user, logout } = useAuth();
   const { pathname } = useLocation();
+  const [mobileOpen, setMobileOpen] = useState(false);
+  const handleDrawerToggle = () => {
+    setMobileOpen((prev) => !prev);
+  };
+
 
   return (
     <Box
@@ -24,41 +39,62 @@ export const AppLayout = () => {
         minHeight: "100vh",
       }}
     >
-      {/* Header AppBar */}
+      {/* desktop Header AppBar */}
       <AppBar position="fixed" sx={{ top: 0, left: 0, right: 0, zIndex: 1200 }}>
         <Toolbar sx={{ justifyContent: "space-between" }}>
           {isAuthenticated && (
-            <Box sx={{ display: "flex", gap: 2 }}>
-              {[
-                { to: "/home", label: "Home" },
-                { to: "/account", label: "Account" },
-                { to: "/projects", label: "Projects" },
-                { to: "/hardware", label: "Hardware" },
-              ].map(({ to, label }) => (
-                <Button
-                  key={to}
+            <>
+              {/* Desktop Navigation */}
+              <Box
+                sx={{
+                  display: { xs: "none", md: "flex" }, // hide on small screens
+                  gap: 2,
+                }}
+              >
+                {[
+                  { to: "/home", label: "Home" },
+                  { to: "/account", label: "Account" },
+                  { to: "/projects", label: "Projects" },
+                  { to: "/hardware", label: "Hardware" },
+                ].map(({ to, label }) => (
+                  <Button
+                    key={to}
+                    color="inherit"
+                    component={Link}
+                    to={to}
+                    sx={pathname === to ? activeNavSx : undefined}
+                  >
+                    {label}
+                  </Button>
+                ))}
+              </Box>
+
+              {/* Mobile Hamburger */}
+              <Box sx={{ display: { xs: "flex", md: "none" } }}>
+                <IconButton
                   color="inherit"
-                  component={Link}
-                  to={to}
-                  sx={pathname === to ? activeNavSx : undefined}
+                  edge="start"
+                  onClick={handleDrawerToggle}
                 >
-                  {label}
-                </Button>
-              ))}
-            </Box>
+                  <MenuIcon />
+                </IconButton>
+              </Box>
+            </>
           )}
 
-          {/* Center - App Title */}
+
+          {/* Center - App Title changed to flex grow*/}
           <Typography
             variant="h6"
             sx={{
-              position: "absolute",
-              left: "50%",
-              transform: "translateX(-50%)",
+              flexGrow: 1,
+              textAlign: { xs: "left", md: "center" },
               fontWeight: 600,
+              ml: { xs: 1, md: 0 },
             }}
           >
-            Hardware Checkout App
+
+            {`Hardware ${isAuthenticated ? "" : ""} Checkout App`}
           </Typography>
 
           {/* Right side - Auth button */}
@@ -69,12 +105,45 @@ export const AppLayout = () => {
               </Button>
             ) : (
               <Button color="inherit" onClick={logout}>
-                Sign out ({user?.userId})
+                <Box sx={{ display: { xs: "none", sm: "inline" } }}>
+                  Sign out ({user?.userId})
+                </Box>
+                <Box sx={{ display: { xs: "inline", sm: "none" } }}>
+                  Logout
+                </Box>
+
               </Button>
             )}
           </Box>
         </Toolbar>
       </AppBar>
+      <Drawer
+        anchor="left"
+        open={mobileOpen}
+        onClose={handleDrawerToggle}
+      >
+        <Box
+          sx={{ width: 250 }}
+          role="presentation"
+          onClick={handleDrawerToggle}
+        >
+          <List>
+            {[
+              { to: "/home", label: "Home" },
+              { to: "/account", label: "Account" },
+              { to: "/projects", label: "Projects" },
+              { to: "/hardware", label: "Hardware" },
+            ].map(({ to, label }) => (
+              <ListItem key={to} disablePadding>
+                <ListItemButton component={Link} to={to}>
+                  <ListItemText primary={label} />
+                </ListItemButton>
+              </ListItem>
+            ))}
+          </List>
+        </Box>
+      </Drawer>
+
 
       {/* Main Content Area */}
       <Container
@@ -116,6 +185,6 @@ export const AppLayout = () => {
           </Typography>
         </Toolbar>
       </AppBar>
-    </Box>
+    </Box >
   );
 };
