@@ -19,8 +19,7 @@ Complete API endpoint specification for the Team Project Hardware Checkout Syste
 
 ### POST /api/auth/login
 Login endpoint for user authentication.
-
-**Status:** IMPLEMENTED
+Defined in auth routes
 
 **Request:**
 ```json
@@ -57,8 +56,6 @@ Login endpoint for user authentication.
 
 ### POST /api/auth/register
 Register a new user account.
-
-**Status:** IMPLEMENTED (Casey's PR)
 
 **Request:**
 ```json
@@ -98,8 +95,6 @@ Register a new user account.
 ### GET /api/users
 List all users.
 
-**Status:** IMPLEMENTED
-
 **Query Parameters:**
 - None currently
 
@@ -108,15 +103,12 @@ List all users.
 [
   {
     "userId": "string",
-    "email": "string (optional)"
   }
 ]
 ```
 
 ### POST /api/users
 Create a new user account.
-
-**Status:** IMPLEMENTED
 
 **Request:**
 ```json
@@ -144,19 +136,16 @@ Create a new user account.
 **Implementation Notes:**
 - Only `userId` and `password` required (per professor clarification)
 - `userId` must be unique (enforced in code)
-- Both `userId` and `password` are encrypted using cyclic cipher before storage
+- Only `password` is currently encrypted (userId encryption planned)
 - Return sanitized user data (excludes `password`)
 
 ### GET /api/users/{userId}
 Get specific user details.
 
-**Status:** [NEEDS IMPLEMENTATION]
-
 **Response (200):**
 ```json
 {
   "userId": "string",
-  "email": "string (optional)"
 }
 ```
 
@@ -167,8 +156,6 @@ Get specific user details.
 ### GET /api/projects
 List all projects with associated users and hardware allocations.
 
-**Status:** IMPLEMENTED (response format needs update)
-
 **Query Parameters:**
 - `?ownerUserId={userId}` - Filter by project owner
 
@@ -177,14 +164,14 @@ List all projects with associated users and hardware allocations.
 [
   {
     "projectId": "string (unique)",
-    "name": "string",
+    "projectName": "string",
     "description": "string",
     "ownerUserId": "string",
     "assignedUsers": ["userid1", "userid2"],
-    "hardwareAllocations": [
+    "assignedHardware": [
       {
         "hardwareId": "string",
-        "checkedOut": "integer"
+        "amount": "integer"
       }
     ],
     "createdAt": "ISO8601 timestamp"
@@ -193,22 +180,20 @@ List all projects with associated users and hardware allocations.
 ```
 
 **Implementation Notes:**
-- Response includes `assignedUsers[]` - list of user identifiers authorized for the project
-- Response includes `hardwareAllocations[]` - hardware currently checked out by this project
-- For UI simplicity, return denormalized/assembled data in single call
+- Response includes `assignedUsers[]` and `assignedHardware[]`
+- Denormalized/assembled data for UI simplicity
 - Filter results based on user permissions if authentication is implemented
 
 ### POST /api/projects
 Create a new project.
 
-**Status:** [IMPLEMENTED] (needs validation)
-
 **Request:**
 ```json
 {
   "projectId": "string (unique identifier)",
-  "name": "string (required)",
-  "description": "string"
+  "projectName": "string (required)",
+  "description": "string",
+  "ownerUserId": "string"
 }
 ```
 
@@ -216,9 +201,9 @@ Create a new project.
 ```json
 {
   "projectId": "string",
-  "name": "string",
+  "projectName": "string",
   "description": "string",
-  "ownerUserId": "string (set to authenticated user)",
+  "ownerUserId": "string",
   "createdAt": "ISO8601 timestamp"
 }
 ```
@@ -226,7 +211,7 @@ Create a new project.
 **Error Response (400):**
 ```json
 {
-  "error": "Missing required fields: name",
+  "error": "Missing required fields: projectName",
   "code": 400
 }
 ```
@@ -235,20 +220,24 @@ Create a new project.
 - Validate all required fields
 - Set `ownerUserId` to authenticated user automatically
 - Ensure `projectId` is unique
-- TODO: Decide on projectId format (auto-generated vs user-provided)
 
 ### GET /api/projects/{projectId}
 Get specific project details.
-
-**Status:** NEEDS IMPLEMENTATION
 
 **Response (200):**
 ```json
 {
   "projectId": "string",
-  "name": "string",
+  "projectName": "string",
   "description": "string",
   "ownerUserId": "string",
+  "assignedUsers": ["userid1", "userid2"],
+  "assignedHardware": [
+    {
+      "hardwareId": "string",
+      "amount": "integer"
+    }
+  ],
   "createdAt": "ISO8601 timestamp"
 }
 ```
@@ -577,22 +566,22 @@ Key architectural decisions agreed upon by the team:
 
 ## Implementation Status Summary
 
-| Endpoint | Method | Status | Priority | Owner |
-|----------|--------|--------|----------|-------|
-| /api/auth/login | POST | IMPLEMENTED | - | - |
-| /api/auth/register | POST | IMPLEMENTED | - | Casey |
-| /api/users | GET | IMPLEMENTED | - | - |
-| /api/users | POST | IMPLEMENTED | - | - |
-| /api/users/{userId} | GET | NEEDS BUILD | MEDIUM | - |
-| /api/projects | GET | IMPLEMENTED (update response) | HIGH | Yuri |
-| /api/projects | POST | IMPLEMENTED | - | - |
-| /api/projects/{projectId} | GET | NEEDS BUILD | MEDIUM | - |
-| /api/hardware | GET | NEEDS BUILD | HIGH | Yuri |
-| /api/hardware/availability | GET | NEEDS BUILD | HIGH | Yuri |
-| /api/hardware/{id}/checkout | POST | NEEDS BUILD | HIGH | Yuri |
-| /api/hardware/{id}/checkin | POST | NEEDS BUILD | HIGH | Yuri |
-| /api/hardware/allocations | GET | NEEDS BUILD | MEDIUM | - |
-| /api/health | GET | IMPLEMENTED | - | - |
+| Endpoint                       | Method | Status        | Priority |
+|---------------------------------|--------|--------------|----------|
+| /api/auth/login                 | POST   | IMPLEMENTED  | -        |
+| /api/auth/register              | POST   | IMPLEMENTED  | -        |
+| /api/users                      | GET    | IMPLEMENTED  | -        |
+| /api/users                      | POST   | IMPLEMENTED  | -        |
+| /api/users/{userId}             | GET    | NEEDS BUILD  | MEDIUM   |
+| /api/projects                   | GET    | IMPLEMENTED  | HIGH     |
+| /api/projects                   | POST   | IMPLEMENTED  | -        |
+| /api/projects/{projectId}       | GET    | IMPLEMENTED  | MEDIUM   |
+| /api/hardware                   | GET    | NEEDS BUILD  | HIGH     |
+| /api/hardware/availability      | GET    | NEEDS BUILD  | HIGH     |
+| /api/hardware/{id}/checkout     | POST   | NEEDS BUILD  | HIGH     |
+| /api/hardware/{id}/checkin      | POST   | NEEDS BUILD  | HIGH     |
+| /api/hardware/allocations       | GET    | NEEDS BUILD  | MEDIUM   |
+| /api/health                     | GET    | IMPLEMENTED  | -        |
 
 ---
 
@@ -605,6 +594,6 @@ Key architectural decisions agreed upon by the team:
 
 ---
 
-**Last Updated:** February 13, 2026  
-**Version:** 1.2  
+**Last Updated:** February 28, 2026  
+**Version:** 1.3  
 **Status:** In Development
