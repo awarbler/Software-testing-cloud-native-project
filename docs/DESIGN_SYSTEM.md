@@ -825,8 +825,8 @@ const darkTheme = createTheme({
 
 ## Implementation Checklist
 
-- [ ] Primary color (#446B99) applied to main buttons and links
-- [ ] Secondary color (#5B9FD5) used for hover states
+- [ ] Primary color (#00897B) applied to main buttons and links
+- [ ] Secondary color (#26A69A or #00BCD4) used for hover states
 - [ ] Semantic colors (green/orange/red) applied appropriately
 - [ ] Typography scale implemented across all pages
 - [ ] Spacing system consistently applied (16px increments)
@@ -835,7 +835,7 @@ const darkTheme = createTheme({
 - [ ] Alert/message components styled correctly
 - [ ] Accessibility: Color contrast verified (4.5:1 minimum)
 - [ ] Accessibility: Keyboard navigation through all interactive elements
-- [ ] Accessibility: Focus visible outlines (3px, #5B9FD5)
+- [ ] Accessibility: Focus visible outlines (3px, #26A69A)
 - [ ] Responsive design tested at all breakpoints (xs, sm, md, lg, xl)
 - [ ] Touch targets all 48px minimum (mobile)
 - [ ] Loading states and transitions smooth (300ms standard)

@@ -191,14 +191,14 @@ frontend/
 │   │   ├── Home.tsx             # Home page
 │   │   ├── Auth.tsx             # Login/register
 │   │   ├── Account.tsx          # User profile
-│   │   ├── Projects.tsx         # Project management (TODO)
-│   │   └── Hardware.tsx         # Hardware checkout (TODO)
+│   │   ├── Projects.tsx         # Project management 
+│   │   └── Hardware.tsx         # Hardware checkout 
 │   ├── components/              # Reusable components
 │   ├── api/
 │   │   ├── http.ts              # HTTP client wrapper
 │   │   ├── users.ts             # User API functions
 │   │   ├── projects.ts          # Project API functions
-│   │   └── hardware.ts          # Hardware API functions (TODO)
+│   │   └── hardware.ts          # Hardware API functions 
 │   ├── auth/
 │   │   ├── authContext.ts       # Auth context/state
 │   │   ├── AuthProvider.tsx     # Auth provider component
