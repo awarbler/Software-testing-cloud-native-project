@@ -36,8 +36,8 @@ The project is under active development. Some hardware endpoints are designed bu
 | Delete Project | Implemented | Owner restricted |
 | Health Endpoint | Implemented | `/api/health` |
 | Hardware Inventory Listing | Not Implemented | — |
-| Hardware Checkout | Not Implemented | — |
-| Hardware Check-in | Not Implemented | — |
+| Hardware Checkout | Implemented | — |
+| Hardware Check-in | Implemented | — |
 | Approval Workflow | Not Implemented | — |
 | Automated Backend Testing | Not Implemented | — |
 
@@ -117,12 +117,13 @@ The current implementation does not use JWT refresh tokens or server-managed ses
 - `POST /api/projects`
 - `PATCH` project membership endpoints
 - `GET /api/health`
-
-### Designed but Not Implemented
-
 - `/api/hardware`
 - `/api/hardware/{id}/checkout`
 - `/api/hardware/{id}/checkin`
+
+### Designed but Not Implemented
+
+
 - `/api/hardware/allocations`
 
 See `docs/API_REFERENCE.md` for detailed endpoint specification and status markers.

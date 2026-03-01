@@ -19,7 +19,7 @@ This document maps Team Project requirements to the updated SRS document to ensu
 
 | SR | Requirement | SRS Section | Status |
 |----|-----------|-------------|--------|
-| SR-01 | System shall user to create secure accounts | 3.1.1 (User Registration) | Covered |
+| SR-01 | System shall allow user to create secure accounts | 3.1.1 (User Registration) | Covered |
 | SR-02 | System shall encrypt user credentials | 4.2.2 (Password Security) | Covered |
 | SR-03 | System shall authenticate user | 3.1.2 (User Authentication) | Covered |
 | SR-04 | System shall allow project creation and selection | 3.2.1 (Create Project) | Covered |
@@ -64,7 +64,6 @@ The system shall persist the following entities:
 
 2. **Atomic Database Operations**: 
    - Uses MongoDB for direct atomic updates
-   - Mongoose transactions or equivalent for multi-step operations
    - Ensures availability calculations remain consistent
 
 3. **Error Code Standards**:
@@ -77,7 +76,8 @@ The system shall persist the following entities:
 4. **Hardware Management**:
    - Two hardware sets: HWSet1 and HWSet2
    - Real-time availability calculated as: `available = totalCapacity - allocatedUnits`
-   - Support for request → approval → checkout → check-in workflow
+   - Hardware checkout and check-in endpoints are implemented
+   - Approval workflow is designed but not yet implemented
 
 5. **Project Context**:
    - Projects serve as organizational units for hardware requests
@@ -97,11 +97,10 @@ All endpoints are documented in **Section 5.3.1** of the SRS:
 - `POST /api/projects` - Create project
 
 **Hardware Management:**
-- `GET /api/hardware-sets` - Get hardware definitions
-- `GET /api/hardware-availability` - Get real-time availability
-- `POST /api/resource-requests` - Request resources
-- `POST /api/resource-requests/{id}/checkout` - Checkout resources
-- `POST /api/allocations/{id}/checkin` - Check-in resources
+- `GET /api/hardware` - Get hardware definitions
+- `GET /api/hardware/availability` - Get real-time availability
+- `POST /api/hardware/{id}/checkout` - Checkout hardware
+- `POST /api/hardware/{id}/checkin` - Check-in hardware
 - `GET /api/allocations` - View allocation history
 
 ---

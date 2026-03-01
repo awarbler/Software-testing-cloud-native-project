@@ -42,22 +42,15 @@ This Software Design Document provides a detailed technical design for the Hardw
 
 ## 2. Record History
 
-| Version | Date | Author | Changes |
-|---------|------|--------|---------|
-| 1.0.0 | Feb 10, 2026 | Casey Webb | Initial SDD creation with architecture, backend, frontend, and API design |
-| 1.1.0 | Feb 10, 2026 | Casey Webb | Added stakeholders, record history, UML diagrams, flowcharts, security design, and testing strategy |
-
----
-
 ## 3. Stakeholders
 
 ### 3.1 Development Team
 
 | Role | Name | Responsibilities |
 |------|------|------------------|
-| **Project Lead / Lead Developer** | Casey Webb | Overall architecture, backend development, MongoDB design, technical decisions |
+| **Project Lead / Lead Developer** | | Overall architecture, backend development, MongoDB design, technical decisions |
 | **Frontend Developer** | | 
-| **Team Member** | [TBD] |  |
+| **Team Member** | |  |
 | **Team Member** | Anita Woodford | Documentation, 
 
 Needs Assignments: Hardware module implementation, API endpoints, testing deployment configuration, DevOps |
@@ -87,7 +80,7 @@ Needs Assignments: Hardware module implementation, API endpoints, testing deploy
 
 ## 4. System Architecture
 
-### 2.1 High-Level Architecture
+### 4.1 High-Level Architecture
 
 ```
 ┌─────────────────────────────────────────────────────────────────┐
@@ -152,7 +145,7 @@ Needs Assignments: Hardware module implementation, API endpoints, testing deploy
 └─────────────────────────────────────────────────────────────────┘
 ```
 
-### 2.2 Deployment Architecture
+### 4.2 Deployment Architecture
 
 ```
 ┌─────────────────────────────────────────────────────────────────┐
@@ -188,7 +181,7 @@ Needs Assignments: Hardware module implementation, API endpoints, testing deploy
 └─────────────────────────────────────────────────────────────────┘
 ```
 
-### 2.3 Network Flow
+### 4.3 Network Flow
 
 1. **Frontend to Backend**: Axios via JavaScript/HTTP
    - Base URL: `/api` (proxied in dev by Vite to `http://localhost:5001`)
@@ -208,7 +201,7 @@ Needs Assignments: Hardware module implementation, API endpoints, testing deploy
 
 ## 5. Backend Design
 
-### 3.1 Technology Stack
+### 5.1 Technology Stack
 
 - **Framework**: Flask 3.1.2
 - **Language**: Python 3.12+
@@ -217,36 +210,56 @@ Needs Assignments: Hardware module implementation, API endpoints, testing deploy
 - **Environment**: python-dotenv 1.2.1
 - **Web Server**: Flask development server (gunicorn in production)
 
-### 3.2 Project Structure
+### 5.2 Project Structure
 
 ```
 backend/
 ├── app/
-│   ├── __init__.py          # App factory, blueprint registration
-│   ├── config.py            # Configuration management
-│   ├── db.py                # MongoDB connection & utilities
-│   ├── mongo_utils.py       # Document serialization helpers
-│   └── routes/
-│       ├── __init__.py
-│       ├── auth.py          # Authentication: /api/auth/login
-│       ├── users.py         # Users: /api/users (CRUD)
-│       ├── projects.py      # Projects: /api/projects (CRUD)
-│       ├── hardware.py       # Hardware: /api/hardware* (TO BUILD)
-│       ├── health.py        # Health: /api/health
-│       └── root.py          # Root: /
-├── run.py                   # Entry point
-├── pyproject.toml           # Dependencies & metadata
-├── Dockerfile               # Container configuration
-└── .flaskenv               # Flask environment variables
+│   ├── __init__.py              # App factory, blueprint registration
+│   ├── config.py                # Configuration management
+│   ├── db.py                    # MongoDB connection & utilities
+│   ├── mongo_utils.py           # Document serialization helpers
+│   ├── routes/
+│   │   ├── __init__.py
+│   │   ├── auth.py              # Authentication: /api/auth/login, /api/auth/register
+│   │   ├── users.py             # Users: /api/users (CRUD)
+│   │   ├── projects.py          # Projects: /api/projects (CRUD)
+│   │   ├── hardware.py          # Hardware: /api/hardware* (checkout/checkin implemented, approval workflow planned)
+│   │   ├── health.py            # Health: /api/health
+│   │   ├── root.py              # Root: /
+│   ├── schemas/
+│   │   ├── hardware.py          # Hardware set schema definitions
+│   │   ├── projects.py          # Project schema definitions
+│   │   └── __pycache__/
+│   └── __pycache__/
+├── run.py                       # Entry point
+├── pyproject.toml               # Dependencies & metadata
+├── Dockerfile                   # Container configuration
+├── cloud_native_backend.egg-info/
+│   ├── dependency_links.txt
+│   ├── PKG-INFO
+│   ├── requires.txt
+│   ├── SOURCES.txt
+│   └── top_level.txt
+└── .flaskenv                    # Flask environment variables
 ```
 
-### 3.3 Core Components
+### 5.3 Core Components
 
-#### 3.3.1 Application Factory (app/__init__.py)
+#### 5.3.1 Application Factory (app/__init__.py)
+- Application Factory: Initializes app, config, CORS, MongoDB, blueprints.
+- Database Connection: Single client, pooling, atomic ops, error handling
+- Authentication: Cyclic cipher encryption, login endpoint implemented, registration via users endpoint.
+- Users Module: Full CRUD, encrypted credentials, unique userId, sanitization
+- Projects Module: Full CRUD, ownerUserId, filtering, team-based access (design conflict flagged).
+- Hardware Module: Checkout/checkin implemented, approval workflow and advanced features planned.
+- Schemas: Present for hardware and projects.
 
-**Responsibility**: Initialize Flask app with all extensions and blueprints
-
-**Current Status**: IMPLEMENTED
+**Responsibility**: 
+- Initialize Flask app with all extensions and blueprints
+- Loads configuration, sets up CORS, initializes MongoDB.
+- Registers all route blueprints: auth, users, projects, hardware, health, root.
+- Handles graceful shutdown and resource cleanup.
 
 **Design Details**:
 - Uses Flask application factory pattern
@@ -271,11 +284,11 @@ def create_app() -> Flask:
     # 7. Return configured app
 ```
 
-#### 3.3.2 Database Connection (app/db.py)
+#### 5.3.2 Database Connection (app/db.py)
 
-**Responsibility**: Manage MongoDB connection lifecycle and database access
+**Responsibility**: 
+- Manage MongoDB connection lifecycle and database access
 
-**Current Status**: IMPLEMENTED
 
 **Design Details**:
 - Single MongoDB client per app instance
@@ -295,11 +308,9 @@ MONGO_URI = os.getenv("MONGO_URI", "mongodb://localhost:27017")
 MONGO_DB = os.getenv("MONGO_DB", "test")
 ```
 
-#### 3.3.3 Authentication Module (app/routes/auth.py)
+#### 5.3.3 Authentication Module (app/routes/auth.py)
 
 **Responsibility**: Handle user authentication and credential encryption
-
-**Current Status**: PARTIALLY IMPLEMENTED
 
 **Status Mapping**:
 - `_encrypt()` function: IMPLEMENTED
@@ -337,11 +348,9 @@ Process:
 Output: { ok: true/false, message, user: { userid } }
 ```
 
-#### 3.3.4 Users Module (app/routes/users.py)
+#### 5.3.4 Users Module (app/routes/users.py)
 
 **Responsibility**: User account management (create, read, update, delete)
-
-**Current Status**: IMPLEMENTED
 
 **Design Details**:
 
@@ -402,11 +411,9 @@ Error Codes:
 
 **Security Feature**: `sanitize_user()` function removes sensitive fields (userid, password) from ALL API responses to prevent leaking the unique login identity.
 
-#### 3.3.5 Projects Module (app/routes/projects.py)
+#### 5.3.5 Projects Module (app/routes/projects.py)
 
 **Responsibility**: Project management (create, read, filter, manage)
-
-**Current Status**: IMPLEMENTED
 
 **Design Details**:
 
@@ -473,7 +480,7 @@ Returns: Array of project documents (limited to 200)
 - description: non-empty, descriptive text
 - ownerUserId: non-empty string matching user id
 
-#### 3.3.6 Hardware Module (app/routes/hardware.py)
+#### 5.3.6 Hardware Module (app/routes/hardware.py)
 
 **Responsibility**: Hardware resource management and allocation tracking
 
@@ -559,7 +566,9 @@ This module MUST be created to handle hardware resource management. Based on the
    - Increment/decrement available units via $inc operator
    - MongoDB transactions for multi-step operations if needed
 
-### 3.4 Error Handling Strategy
+### 5.4 Error Handling Strategy
+- Standard HTTP status codes, consistent response format.
+- Config via environment variables, .env file, config.py.
 
 **Standard HTTP Status Codes**:
 - `200 OK`: Successful request
@@ -609,7 +618,7 @@ FLASK_DEBUG = "1"                         # Debug mode (dev only)
 
 ## 6. Frontend Design
 
-### 4.1 Technology Stack
+### 6.1 Technology Stack
 
 - **Framework**: React 19.2.0
 - **Language**: TypeScript 5.9+
@@ -619,7 +628,7 @@ FLASK_DEBUG = "1"                         # Debug mode (dev only)
 - **UI Library**: Material-UI (MUI) 7.3.7
 - **Build Output**: SPA (Single Page Application)
 
-### 4.2 Project Structure
+### 6.2 Project Structure
 
 ```
 frontend/
@@ -671,16 +680,18 @@ frontend/
 └── README.md               # Project documentation
 ```
 
-### 4.3 Core Components
+### 6.3 Core Components
+- Entry Point & App Component: StrictMode, AuthProvider, RouterProvider.
+- Authentication System: Context, Provider, useAuth hook (needs userId update).
+- HTTP Client: Axios with interceptors, error handling.
+- API Modules: usersApi, projectsApi, hardwareApi (to build).
+- Page Components: Auth, Home, Account (implemented); Projects, Hardware (to build).
+- Layout & Routing: AppLayout, protected routes, navigation- 
 
-#### 4.3.1 Entry Point & App Component (main.tsx, App.tsx)
+#### 6.3.1 Entry Point & App Component (main.tsx, App.tsx)
 
 **Responsibility**: Bootstrap React application and set up context providers
-
-**Current Status**: IMPLEMENTED
-
 **Design Details**:
-
 **main.tsx**:
 ```typescript
 // Creates React root and mounts App component
@@ -705,12 +716,10 @@ export default App() {
 }
 ```
 
-#### 4.3.2 Authentication System
+#### 6.3.2 Authentication System
 
 **Status**: PARTIALLY IMPLEMENTED
-
 **Components**:
-
 **AuthContext & AuthProvider** (auth/authContext.ts, auth/AuthProvider.tsx)
 
 **Current Implementation Issues**:
@@ -750,12 +759,9 @@ const { user, isAuthenticated, login, logout } = useAuth();
 3. Update login function to accept userId parameter
 4. Verify integration with login API response
 
-#### 4.3.3 HTTP Client (api/http.ts)
+#### 6.3.3 HTTP Client (api/http.ts)
 
 **Responsibility**: Axios instance with interceptors for API requests
-
-**Current Status**: IMPLEMENTED
-
 **Design Details**:
 
 **Base Configuration**:
@@ -795,7 +801,7 @@ api.delete<T>(url, config)
 getErrorMessage(error): string
 ```
 
-#### 4.3.4 API Modules
+#### 6.3.4 API Modules
 
 **File Structure**:
 - `api/users.ts`: User authentication and management
@@ -921,7 +927,7 @@ hardwareApi.getAllocations(projectId?: string)
   // Returns: Allocation[]
 ```
 
-#### 4.3.5 Page Components
+#### 6.3.5 Page Components
 
 **Status**: Auth and Home IMPLEMENTED; Projects and Hardware TO BUILD
 
@@ -1006,7 +1012,7 @@ hardwareApi.getAllocations(projectId?: string)
 - Allocation history table
 - Dashboard widgets showing utilization
 
-#### 4.3.6 Layout & Routing
+#### 6.3.6 Layout & Routing
 
 **AppLayout Component** (layouts/AppLayout.tsx)
 
@@ -1103,11 +1109,11 @@ Else:
 
 ## 7. Data Model Design
 
-### 5.1 MongoDB Collections
+### 7.1 MongoDB Collections
 
 **INTEGRATION NOTES**: This section integrates the detailed database schema provided by project requirements (Feb 10, 2026). All fields, types, and indexes specified below reflect the project's design specifications. Todo markers [DESIGN CONFLICT] indicate design conflicts that require team discussion before implementation.
 
-#### 5.1.0 Design Conflicts & Critical Decisions
+#### 7.1.0 Design Conflicts & Critical Decisions
 
 **Issue 1: Projects Collection - Single Owner vs. Team-Based Access**
 
@@ -1148,7 +1154,7 @@ db.projects.find({assignedUsers: "user123"})
 
 ---
 
-#### 5.1.1 Users Collection
+#### 7.1.1 Users Collection
 
 **Purpose**: Store user account information with encrypted credentials
 
@@ -1185,7 +1191,7 @@ db.projects.find({assignedUsers: "user123"})
 - userId is returned DECRYPTED for display purposes
 - Client receives decrypted userId for display
 
-#### 5.1.2 Projects Collection
+#### 7.1.2 Projects Collection
 
 **Purpose**: Store project definitions with ownership and team member tracking
 
@@ -1255,7 +1261,7 @@ Current implementation uses `ownerUserId` for single owner tracking, but project
 - Team member filtering: `db.projects.find({assignedUsers: "<userId>"})`
 - Team view: Return projects where current user IN assignedUsers[]
 
-#### 5.1.3 Hardware Sets Collection
+#### 7.1.3 Hardware Sets Collection
 
 **Purpose**: Define available hardware resource sets and their specifications
 
@@ -1344,7 +1350,7 @@ Current implementation uses `ownerUserId` for single owner tracking, but project
 }
 ```
 
-#### 5.1.4 Resource Requests Collection (TO DESIGN)
+#### 7.1.4 Resource Requests Collection (TO DESIGN)
 
 **Purpose**: Track user requests for hardware resources
 
@@ -1452,7 +1458,9 @@ For each hardware set:
   utilizationPercent = (allocatedUnits / totalCapacity) * 100
 ```
 
-### 5.2 Collection Relationships
+### 7.2 Collection Relationships
+- Users own projects, request resources, and have allocations.
+- Validation rules enforced in backend API layer.
 
 ```
 users (1) ──┬─→ (many) projects (owned by user)
@@ -1471,7 +1479,7 @@ hardware_sets (1) ──┬─→ (many) resource_requests (requested hwset)
 resource_requests (1) ──→ (1) allocations (when checked out)
 ```
 
-### 5.3 Data Validation Rules
+### 7.3 Data Validation Rules
 
 **Validation Location**: Backend API Layer (app/routes/*.py)
 
@@ -1506,7 +1514,9 @@ resource_requests (1) ──→ (1) allocations (when checked out)
 - `timestamp`: Date, auto-set to current time
 - `status`: String, enum: ["active", "returned"]
 
-### 5.4 Capacity Management & Atomic Operations
+### 7.4 Capacity Management & Atomic Operations
+- Atomic MongoDB operations for allocation.
+- Real-time availability calculation.
 
 **Capacity Calculation**:
 ```
@@ -1705,6 +1715,8 @@ Frontend:
 ## 9. API Design
 
 ### 9.1 REST API Overview
+- Base URL: /api
+- JSON response format, error handling.
 
 **Base URL**: `http://localhost:5001/api`
 
@@ -1731,10 +1743,13 @@ Frontend:
 ### 9.2 API Endpoints
 
 #### 9.2.1 Authentication Endpoints
+- Authentication: /api/auth/login (implemented)
+- Users: /api/users (CRUD, implemented)
+- Projects: /api/projects (CRUD, implemented)
+- Hardware: /api/hardware/* (checkout/checkin implemented, advanced endpoints planned)
+- Health: /api/health (implemented)
 
 **POST /api/auth/login** - User Login
-
-**Status**: IMPLEMENTED
 
 ```
 Method: POST
@@ -1762,8 +1777,6 @@ Response 401: {
 
 **POST /api/users** - Create User (Register)
 
-**Status**: IMPLEMENTED
-
 ```
 Method: POST
 URL: /api/users/register
@@ -1790,8 +1803,6 @@ Response 409: {
 
 **GET /api/users** - List Users
 
-**Status**: IMPLEMENTED
-
 ```
 Method: GET
 URL: /api/users
@@ -1806,8 +1817,6 @@ Response 200: [
 ```
 
 **GET /api/users/<id>** - Get User Details
-
-**Status**: IMPLEMENTED
 
 ```
 Method: GET
@@ -1826,8 +1835,6 @@ Response 404: {
 #### 9.2.3 Project Management Endpoints
 
 **POST /api/projects** - Create Project
-
-**Status**: IMPLEMENTED
 
 ```
 Method: POST
@@ -1853,8 +1860,6 @@ Response 409: projectId already exists
 
 **GET /api/projects** - List Projects (with optional filter)
 
-**Status**: IMPLEMENTED
-
 ```
 Method: GET
 URL: /api/projects?ownerUserId=<userId>
@@ -1875,8 +1880,6 @@ Response 200: [
 ```
 
 **GET /api/projects/<id>** - Get Project Details
-
-**Status**: IMPLEMENTED
 
 #### 9.2.4 Hardware Management Endpoints (TO BUILD)
 
@@ -2015,6 +2018,7 @@ Response 200: [
 ```
 
 ### 9.3 HTTP Status Codes
+Standard codes, CORS for frontend origin.
 
 - `200 OK`: Successful GET, POST, PUT, PATCH
 - `201 Created`: Successful resource creation
@@ -2042,6 +2046,11 @@ CORS_ORIGINS=http://localhost:5173
 ---
 
 ## 10. Security Design
+- Authentication: Cyclic cipher (PoC, upgrade planned).
+- Authorization: Stateless, owner-based access.
+- Data Protection: Encrypted credentials, CORS, input validation.
+- Database Security: Indexes, backup, recovery (TODOs flagged).
+- Audit & Logging: Request logging, error messages, production recommendations.
 
 ### 10.1 Authentication Architecture
 
@@ -2234,6 +2243,10 @@ All API endpoints perform strict validation:
 
 ## 11. Business Rules
 
+Unique userId and projectId, encrypted credentials, stateless sessions.
+
+Hardware allocation rules, atomic operations, error handling.
+
 ### 11.1 User Management Rules
 1. UserId MUST be unique across all users
 2. UserId and password MUST be encrypted before storage per SR3
@@ -2286,6 +2299,8 @@ All API endpoints perform strict validation:
 ---
 
 ## 12. Design Patterns & Workflows
+- MVC, Factory, Blueprint, DAO, Provider, Protected Route, Interceptor, Atomic Operations.
+- Flowcharts for authentication, registration, hardware request, project management.
 
 ### 12.1 Authentication Workflow Flowchart
 
@@ -2628,6 +2643,10 @@ Start: Authenticated user creates project
 ## 13. Testing Strategy
 
 ### 13.1 Testing Levels
+- Backend: pytest, unit/integration/E2E tests, fixtures, CI.
+- Frontend: Vitest, React Testing Library, component/context/API/layout tests
+- Manual Testing: Checklist provided.
+- Known Issues: Integration, performance, security, E2E gaps flagged for future work.
 
 **Unit Testing**:
 - Test individual functions in isolation
@@ -2899,6 +2918,8 @@ Before each release:
 | Input Validation | NEEDS ENHANCEMENT | Should add more type checking |
 | Database Indexes | NEEDS BUILD | Should add indexes on foreign keys |
 
+
+
 ### 14.2 Frontend Status
 
 | Component | Status | Notes |
@@ -2995,9 +3016,9 @@ Before each release:
 
 ---
 
-## 10. Development Workflow
+## 16. Development Workflow
 
-### 17.1 Starting the Application
+### 16.1 Starting the Application
 
 **Full Stack**:
 ```bash
@@ -3017,7 +3038,7 @@ Before each release:
 # Starts Vite dev server on port 5173
 ```
 
-### 17.2 Development Environment
+### 16.2 Development Environment
 
 **Backend Setup**:
 ```bash
@@ -3043,7 +3064,7 @@ docker-compose up -d mongo
 mongod
 ```
 
-### 17.3 API Testing
+### 16.3 API Testing
 
 **Tools**: Postman, Insomnia, curl, or Thunder Client
 
@@ -3060,7 +3081,7 @@ curl -X POST http://localhost:5001/api/auth/login \
 
 ---
 
-## 16. Future Enhancements
+## 17. Future Enhancements
 
 1. **Authentication Upgrade**: Replace F3/E1 cipher with bcrypt/Argon2
 2. **JWT Tokens**: Implement JWT-based authentication instead of session cookies
