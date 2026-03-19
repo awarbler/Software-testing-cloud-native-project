@@ -102,7 +102,7 @@ dir_shift:
 ...
 
 ## Coverage Requirements
-- Node coverage: All nodes N1-N19 must be visited, except N7 (infeaseible)
+- Node coverage: All nodes N1-N19 must be visited, except N7 (infeasible)
 - Edge coverage: All edges must be covered except: (N6 -> N7) which is infeasible
 - Prime paths: All feasible prime paths listed above must be covered. The path through N6 -> N7 is excluded due to infeasibility.
 
@@ -117,7 +117,7 @@ Observed behavior : the system dos not enforce forbidden characters , this contr
 ### Baseline test results 
 statements: 60 total, 34 missed -> 42% coverage
 Branches: 26 total, 4 partially covered
-Baseline test only exercised noraml ASCII path, non_ASCII error, num_shift guard,
+Baseline test only exercised normal ASCII path, non_ASCII error, num_shift guard,
 and standard transformation. 
 
 The did not cover:
@@ -134,7 +134,7 @@ auth.py file covers login() and register() so the baseline covers 42% statement
 coverage and partial branch coverage of auth module.
 
 Coverage is limited because the test were derived from 
-expected behavor and simple error handling. There is no CFG path coverage and 
+expected behavior and simple error handling. There is no CFG path coverage and 
 a significant portion of _encrypt() is not tested. This allows testing to move to
 phase 2 (structural Testing) for _encrypt. 
 
