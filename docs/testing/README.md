@@ -1,5 +1,3 @@
-Absolutely. Here is a beginner-friendly draft for your team.
-
 # Testing README 
 
 ## 1. What this folder is for
