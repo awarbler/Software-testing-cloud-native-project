@@ -1,67 +1,78 @@
 # _encrypt() Analysis
 
+### Scope clarification
+
+Two coverage measurements are reported in this project:
+
+1. Full module coverage (auth.py): includes login(), register(), and _encrypt()
+2. Function-level coverage (_encrypt only): used for structural testing analysis
+
+The 42% value refers specifically to _encrypt() coverage, which is the target of structural testing.
+
+The 84% value refers to overall module coverage from baseline endpoint tests.
+
 ## CFG
-![CFG Diagram](./encrypt.png)
+![CFG Diagram](./encrypt2.png)
 *Figure 1: Control Flow Graph for _encrypt()*
 
 ## Nodes
-N1: start
-N2: B1: input_text.isascii()?
-N3: Raise TypeError
-N4: B2: num_shift <1?
-N5: Raise ValueError (num_shift)
-N6: B3: dir_shift < -1 AND dir_shift > 1? (unsatisfiable predicate BUG)
-N7: Raise ValueError(dir_shift)(infeasible: dead code due to unsatisfiable predicate)
-N8: B4: forbidden char present?
-N9: Raise ValueError(forbidden char)
-N10: Reverse string and init loop
-N11: Loop condition(for char in input_text)
-N12: Compute new_ascii
-N13: B5: new_ascii > 127?
-N14: Wrap high(new_ascii -=128)
-N15: B6: new_ascii < 34
-N16: Wrap low(new_ascii += 128)
-N17: Append shifted char
-N18: Return encrypted string
-N19: End
+N1: start<br>
+N2: B1: input_text.isascii()?<br>
+N3: Raise TypeError<br>
+N4: B2: num_shift <1?<br>
+N5: Raise ValueError (num_shift)<br>
+N6: B3: dir_shift < -1 AND dir_shift > 1? (unsatisfiable predicate BUG)<br>
+N7: Raise ValueError(dir_shift)(infeasible: dead code due to unsatisfiable predicate)<br>
+N8: B4: forbidden char present?<br>
+N9: Raise ValueError(forbidden char)<br>
+N10: Reverse string and init loop<br>
+N11: Loop condition(for char in input_text)<br>
+N12: Compute new_ascii<br>
+N13: B5: new_ascii > 127?<br>
+N14: Wrap high(new_ascii -=128)<br>
+N15: B6: new_ascii < 34<br>
+N16: Wrap low(new_ascii += 128)<br>
+N17: Append shifted char<br>
+N18: Return encrypted string<br>
+N19: End<br>
 
 ...
 
 ## Edges
-(N1 → N2)
-(N2 True → N3)
-(N2 False → N4)
-(N4 True → N5)
-(N4 False → N6)
-(N6 True → N7) infeasible
-(N6 False → N8)
-(N8 True → N9)
-(N8 False → N10)
-(N10 → N11)
-(N11 True → N12)
-(N11 False → N18)
-(N12 → N13)
-(N13 True → N14)
-(N13 False → N15)
-(N14 → N17)
-(N15 True → N16)
-(N15 False → N17)
-(N16 → N17)
-(N17 → N11)
-(N18 → N19)
+(N1 → N2)<br>
+(N2 True → N3)<br>
+(N2 False → N4)<br>
+(N4 True → N5)<br>
+(N4 False → N6)<br>
+(N6 True → N7) infeasible<br>
+(N6 False → N8)<br>
+(N8 True → N9)<br>
+(N8 False → N10)<br>
+(N10 → N11)<br>
+(N11 True → N12)<br>
+(N11 False → N18)<br>
+(N12 → N13)<br>
+(N13 True → N14)<br>
+(N13 False → N15)<br>
+(N14 → N17)<br>
+(N15 True → N16)<br>
+(N15 False → N17)<br>
+(N16 → N17)<br>
+(N17 → N11)<br>
+(N18 → N19)<br>
 
 ## Prime Path Set
 
 The prime path includes maximal simple paths through each major route. 
 
-- N1 -> N2 -> N3 Error path non-ASCII
-- N1 -> N2 -> N4 -> N5 Error path num_shift
-- N1 -> N2 -> N4 -> N6 -> N8 -> N10 Error path forbidden char
+- N1 -> N2 -> N3 (non-ASCII Error path )
+- N1 -> N2 -> N4 -> N5 (Error path num_shift)
+- N1 -> N2 -> N4 -> N6 -> N8 -> N10 (forbidden char Error path )
 - N1 -> N2 -> N4 -> N6 -> N8 -> N10 -> N11 -> N12 -> N13 -> N14 -> N17 -> N11 Valid path wrap-high
 - N1 -> N2 -> N4 -> N6 -> N8 -> N10 -> N11 -> N12 -> N13 -> N15 -> N17 -> N11 Valid path no-wrap
 - N1 -> N2 -> N4 -> N6 -> N8 -> N10 -> N11 -> N12 -> N13 -> N15 -> N16 -> N17 Valid path wrap-low
-- N11 -> N18 -> N19 Loop cycle path through appended back t loop condition
-- N6 -> N7 Infeasible path through N6 True (excluded)
+- N11 -> N18 -> N19 (Loop exit path or Loop cycle path through appended back t loop condition)
+- N6 -> N7 (Infeasible path through N6 True (excluded))
 
 ## Infeasibility Proof
 Let :
@@ -115,7 +126,7 @@ From test_auth_encrypt.py
 Observed behavior : the system dos not enforce forbidden characters , this contradict my assumptions - this is a verifiable discrepancy 
 
 ### Baseline test results 
-statements: 60 total, 34 missed -> 42% coverage
+statements: 60 total, 34 missed -> Coverage for _encrypt() only: 42%
 Branches: 26 total, 4 partially covered
 Baseline test only exercised normal ASCII path, non_ASCII error, num_shift guard,
 and standard transformation. 
@@ -130,13 +141,10 @@ Wrap around low
 multi character loop paths
 part of login/register
 
-auth.py file covers login() and register() so the baseline covers 42% statement
+auth.py file covers login() and register(), and _encrypt so the baseline covers 42% statement
 coverage and partial branch coverage of auth module.
 
-Coverage is limited because the test were derived from 
-expected behavior and simple error handling. There is no CFG path coverage and 
-a significant portion of _encrypt() is not tested. This allows testing to move to
-phase 2 (structural Testing) for _encrypt. 
+Coverage is limited because the test were derived from expected behavior and simple error handling. There is no CFG path coverage and a significant portion of _encrypt() is not tested. This allows testing to move to phase 2 (structural Testing) for _encrypt. 
 
 
 ## update as needed

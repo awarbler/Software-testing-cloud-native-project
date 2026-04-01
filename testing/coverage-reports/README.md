@@ -1,5 +1,15 @@
-Baseline coverage screenshot or HTML output
+# Coverage Reports
 
-Post-criteria coverage report
+This folder stores coverage artifacts used for testing phase comparisons.
 
-Before/after comparison table
+## Baseline Coverage
+
+- auth-baseline-coverage.txt: baseline pytest coverage output for auth.py and baseline test set
+
+## Structural Coverage
+
+- Add post-structural coverage output here after structural tests are finalized.
+
+## Comparison
+
+Use this folder to keep before and after coverage artifacts so baseline vs structural improvements are easy to verify.
