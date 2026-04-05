@@ -88,5 +88,5 @@ def test_encrypt_allows_special_characters():
     assert isinstance(result, str) # output should be a string
     assert len(result) == len("my_password$") # length should be the same as input
     # pytest version
-    with pytest.raises(TypeError):
-       _encrypt("my_password$", 1, 1)  # $ is non-ASCII and should raise TypeError
+    #with pytest.raises(TypeError):
+    #   _encrypt("my_password$", 1, 1)  # $ is non-ASCII and should raise TypeError

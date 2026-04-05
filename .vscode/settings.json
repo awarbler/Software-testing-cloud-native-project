@@ -1,7 +1,10 @@
 {
     "cSpell.words": [
         "CACC",
-        "isascii"
+        "checkin",
+        "chodavey",
+        "isascii",
+        "pytest"
     ],
     "python.testing.pytestArgs": [
         "testing"
