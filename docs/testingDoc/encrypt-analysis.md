@@ -2,6 +2,14 @@
 
 ## Version History
 
+- v1.5 (2026-04-04)
+  - Corrected coverage scope wording to explicitly distinguish module-level `auth.py` percentages from `_encrypt()` structural test scope.
+
+- v1.4 (2026-04-02)
+  - Added formal Test Requirements (TR) table and explicit branch definitions.
+  - Expanded logic coverage section to explicit CACC infeasibility reasoning.
+  - Updated input partitioning section to explicit input space partitioning classes.
+
 - v1.3 (2026-04-02)
   - Added explicit T8 and T9 entries to the test-to-coverage mapping.
   - Added loop coverage justification for single-iteration and multi-iteration behavior.
@@ -25,9 +33,10 @@ Two coverage measurements are reported in this project:
 1. Full module coverage (auth.py): includes login(), register(), and _encrypt()
 2. Function-level coverage (_encrypt only): used for structural testing analysis
 
-The 42% value refers specifically to _encrypt() coverage, which is the target of structural testing.
+The 42% baseline value is module-level coverage for auth.py from a baseline suite focused on _encrypt().
+It is not whole-project coverage, and it is not a pure function-only percentage.
 
-The 84% value refers to overall module coverage from baseline endpoint tests.
+Function-level statements about _encrypt() are derived from CFG/path mapping and feasible-path analysis, not from the module percentage alone.
 
 ## Coverage Goals (By Scope)
 
@@ -136,6 +145,33 @@ This demonstrates that the test suite satisfies node, edge, and prime path cover
 - T9 (multiple loop iterations)
   Covers: E20 (loop back edge exercised multiple times)
 
+## Test Requirements Table (TR)
+
+| Requirement Type | Requirement | Covered By |
+|------------------|-------------|------------|
+| Node | N2 True -> N3 | T1 |
+| Node | N4 True -> N5 | T2 |
+| Node | N8 True -> N9 | T3 |
+| Edge | E14 (wrap high) | T5 |
+| Edge | E17 (wrap low) | T6 |
+| Edge | E20 (loop back) | T8, T9 |
+| Prime Path | P1 | T1 |
+| Prime Path | P2 | T2 |
+| Prime Path | P3 | T3 |
+| Prime Path | P4 | T4 |
+| Prime Path | P5 | T5 |
+| Prime Path | P6 | T6 |
+| Prime Path | P7 | T7 |
+
+## Branch Definitions
+
+B1: input_text.isascii()
+B2: num_shift < 1
+B3: dir_shift < -1 AND dir_shift > 1 (infeasible)
+B4: forbidden character present
+B5: new_ascii > 127
+B6: new_ascii < 34
+
 ## Loop Coverage Justification
 
 The loop in _encrypt() (N11 -> N12 -> N17 -> N11) is explicitly tested:
@@ -165,30 +201,47 @@ So P is always false.
 Therefore the True branch at N6 is infeasible and should be excluded from the feasible 
 branch requirement counts.
 
-## CACC Note
-Since P is unsatisfiable, there is no test pair that makes clause A determine P 
-or clause B determine P with P switching True/False as required CACC.
+## Logic Coverage (CACC)
 
-CACC requirement for predicate at B3 is infeasible by logic.
+Predicate at N6:
+P = (dir_shift < -1 AND dir_shift > 1)
 
-## Input Partitioning Model 
-input_text: 
+Clauses:
+A: dir_shift < -1
+B: dir_shift > 1
+
+To satisfy CACC:
+- Each clause must independently determine P
+- P must evaluate to both True and False
+
+However:
+No value of dir_shift can satisfy both A and B simultaneously.
+
+Therefore:
+- Predicate P is unsatisfiable
+- No test pair can make A or B independently determine P
+
+Conclusion:
+CACC is infeasible for this predicate.
+
+## Input Space Partitioning
+
+input_text:
 - non-ASCII
-- ASCII with forbidden chars (space or !)
-- ASCII valid normal chars
-- ASCII char causing wrap-high (example with large positive shift)
-- ASCII char causing wrap-low (example with negative shift)
+- ASCII valid
+- ASCII with forbidden characters
+- ASCII causing wrap-high
+- ASCII causing wrap-low
 
 num_shift:
-- less than 1
-- equal to 1
-- greater than 1
+- < 1 (invalid)
+- = 1
+- > 1
 
 dir_shift:
 - +1
 - -1
-- other values (0, 2, -2) to show current validation defect behavior
-...
+- invalid values (0, 2, -2)
 
 ## Coverage Requirements
 - Node coverage: All nodes N1-N19 must be visited, except N7 (infeasible)
@@ -204,7 +257,7 @@ From test_auth_encrypt.py
 Observed behavior : the system dos not enforce forbidden characters , this contradict my assumptions - this is a verifiable discrepancy 
 
 ### Baseline test results 
-statements: 60 total, 34 missed -> Coverage for _encrypt() only: 42%
+statements: 60 total, 34 missed -> Module-level coverage for auth.py: 42% (baseline suite focused on _encrypt())
 Branches: 26 total, 4 partially covered
 Baseline test only exercised normal ASCII path, non_ASCII error, num_shift guard, and standard transformation. 
 
