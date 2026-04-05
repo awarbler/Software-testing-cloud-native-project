@@ -2,6 +2,9 @@
 
 ## Version History
 
+- v1.5 (2026-04-04)
+  - Corrected coverage scope wording to explicitly distinguish module-level `auth.py` percentages from `_encrypt()` structural test scope.
+
 - v1.4 (2026-04-02)
   - Added formal Test Requirements (TR) table and explicit branch definitions.
   - Expanded logic coverage section to explicit CACC infeasibility reasoning.
@@ -30,9 +33,10 @@ Two coverage measurements are reported in this project:
 1. Full module coverage (auth.py): includes login(), register(), and _encrypt()
 2. Function-level coverage (_encrypt only): used for structural testing analysis
 
-The 42% value refers specifically to _encrypt() coverage, which is the target of structural testing.
+The 42% baseline value is module-level coverage for auth.py from a baseline suite focused on _encrypt().
+It is not whole-project coverage, and it is not a pure function-only percentage.
 
-The 84% value refers to overall module coverage from baseline endpoint tests.
+Function-level statements about _encrypt() are derived from CFG/path mapping and feasible-path analysis, not from the module percentage alone.
 
 ## Coverage Goals (By Scope)
 
@@ -253,7 +257,7 @@ From test_auth_encrypt.py
 Observed behavior : the system dos not enforce forbidden characters , this contradict my assumptions - this is a verifiable discrepancy 
 
 ### Baseline test results 
-statements: 60 total, 34 missed -> Coverage for _encrypt() only: 42%
+statements: 60 total, 34 missed -> Module-level coverage for auth.py: 42% (baseline suite focused on _encrypt())
 Branches: 26 total, 4 partially covered
 Baseline test only exercised normal ASCII path, non_ASCII error, num_shift guard, and standard transformation. 
 
