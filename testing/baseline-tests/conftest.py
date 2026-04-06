@@ -59,5 +59,6 @@ def client(fake_users):
     ):
         flask_app = create_app()
         flask_app.config["TESTING"] = True
+        flask_app.config["PROPAGATE_EXCEPTIONS"] = False
         with flask_app.test_client() as c:
             yield c
