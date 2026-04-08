@@ -5,10 +5,25 @@ import os   # work with file paths
 
 sys.path.append(os.path.abspath("backend"))  # add backend to Python path
 
-def test_dir_shift_negative():  # test case for A = TRUE
-    result = _encrypt("abc", 1, -2)  # call function
-    assert isinstance(result, str)  # ensure valid output
+# Clause A = TRUE (dir_shift < -1)
+def test_clause_A_true():
+    result = _encrypt("abc", 1, -2)  # A = True, B = False
+    assert isinstance(result, str)  # function still runs
 
-def test_dir_shift_positive():  # test case for B = TRUE
-    result = _encrypt("abc", 1, 2)  # call function
-    assert isinstance(result, str)  # ensure valid output
+
+#  Clause A = FALSE
+def test_clause_A_false():
+    result = _encrypt("abc", 1, 0)  # A = False, B = False
+    assert isinstance(result, str)
+
+
+# Clause B = TRUE (dir_shift > 1)
+def test_clause_B_true():
+    result = _encrypt("abc", 1, 2)  # A = False, B = True
+    assert isinstance(result, str)
+
+
+#  Clause B = FALSE
+def test_clause_B_false():
+    result = _encrypt("abc", 1, 0)  # A = False, B = False
+    assert isinstance(result, str)

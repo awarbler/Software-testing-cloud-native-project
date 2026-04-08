@@ -4,7 +4,13 @@
         "checkin",
         "chodavey",
         "isascii",
-        "pytest"
+        "mypassword",
+        "mypasswordé",
+        "mypy",
+        "pycache",
+        "pytest",
+        "PYTHONPATH",
+        "venv"
     ],
     "python.testing.pytestArgs": [
         "testing"
