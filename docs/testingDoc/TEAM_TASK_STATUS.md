@@ -49,7 +49,7 @@ has already been completed in the repository.
 
 # Completed Work (Comprehensive Contributions)
 
-## Anita Woodford — Target 1 (_encrypt) and Project Leadership
+## Anita Woodford — Target 1 (_encrypt) and Project Organization
 
 | Work Item | Evidence Artifact | Status |
 |---|---|---|
