@@ -7,17 +7,18 @@ has already been completed in the repository.
 
 # Remaining Work (Per Project Plan)
 
-| Person/Team | Pending Item | Plan Basis | Evidence Gap in Current Repo | Status |
-|---|---|---|---|---|
-| Anita Woodford | Add `_encrypt` mutation analysis + RIP artifacts | Target 1 Deliverables | No mutation-analysis folder or RIP worksheet yet | Pending |
-| Anita Woodford | Integrate all module outputs into final report (coverage tables + defects) | Milestone 6 | Artifacts exist but not consolidated into single report | Pending |
-| David Cho | Create RIP worksheet for login/register defects | Target 2 Deliverables | No RIP worksheet artifact | Pending |
-| David Cho | Add mutation-analysis artifact for login/register defect exposure | Target 2 Deliverables | No mutation artifact present | Pending |
-| David Cho | Add fix-verification tests | Target 2 Deliverables | No verification tests present | Pending |
-| Eduardo Rosales | Add hardware CFG + prime-path/edge-pair artifact | Target 3 Deliverables | No hardware CFG artifact | Pending |
-| Eduardo Rosales | Add CACC + input partition model (hardware) | Target 3 Deliverables | No logic/partition artifact | Pending |
-| Eduardo Rosales | Generate hardware coverage report | Target 3 Deliverables | No coverage file | Pending |
-| Whole Team | Final report + presentation bundle | Milestone 6 | Not integrated | Pending |
+| Person/Team | Pending Item | Plan Basis | Evidence Gap in Current Repo | Status | Expected Completion Date
+|---|---|---|---|---|---|
+| Anita Woodford | Integrate all module outputs into one final report package with before/after coverage tables. | Team Responsibility + Milestone 6 | No single consolidated final testing report file yet. | Pending |
+| Anita Woodford | Add final defect summary and presentation-ready test evidence bundle. | Team Responsibility + Milestone 6 | Defect evidence exists across files but not yet packaged as one final submission set. | Pending |
+| David Cho | Create RIP worksheet for the login/register userId plaintext defect. | Target 2 Deliverables | No RIP worksheet artifact is present in testing docs. | Pending | 4/8/2026 |
+| David Cho | Add mutation-analysis artifact for login/register defect exposure. | Target 2 Deliverables | No dedicated mutation-analysis artifact for this defect is present. | Pending | 4/8/2026 |
+| David Cho | Add fix-verification tests for login/register if code fix is applied. | Target 2 Deliverables | Baseline endpoint tests exist, but no explicit fix-verification set is present. | Pending | 4/8/2026 |
+| Eduardo Rosales | Implement hardware checkout/checkin formal pytest suite. | Target 3 Deliverables | No hardware-specific pytest files are currently present in testing folder. | Pending | 4/8/2026 |
+| Eduardo Rosales | Add hardware CFG and prime-path/edge-pair test design artifact. | Target 3 Deliverables | No hardware CFG artifact is currently present in testing docs. | Pending | 4/9/2026 |
+| Eduardo Rosales | Add CACC and input partition model for availability predicate. | Target 3 Deliverables | No hardware CACC or partition model artifact is currently present. | Pending | 4/9/2026 |
+| Eduardo Rosales | Generate hardware coverage report and store under coverage-reports. | Target 3 Deliverables | No hardware structural coverage file is currently present. | Pending | 4/9/2026 |
+| Whole Team | Complete remaining milestone phases (structural completion, partitioning, mutation/RIP, report packaging). | Milestones 3-6 | Encrypt work is advanced; hardware and auth-defect RIP artifacts are not complete at the same level. | Pending |
 
 ---
 
