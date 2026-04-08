@@ -3,64 +3,158 @@
 This document summarizes what is still required per the Project Plan and what 
 has already been completed in the repository.
 
-## Remaining Work (Per Project Plan)
+---
+
+# Remaining Work (Per Project Plan)
 
 | Person/Team | Pending Item | Plan Basis | Evidence Gap in Current Repo | Status |
 |---|---|---|---|---|
-| Anita Woodford | Integrate all module outputs into one final report package with before/after coverage tables. | Team Responsibility + Milestone 6 | No single consolidated final testing report file yet. | Pending |
-| Anita Woodford | Add final defect summary and presentation-ready test evidence bundle. | Team Responsibility + Milestone 6 | Defect evidence exists across files but not yet packaged as one final submission set. | Pending |
-| David Cho | Create RIP worksheet for the login/register userId plaintext defect. | Target 2 Deliverables | No RIP worksheet artifact is present in testing docs. | Pending |
-| David Cho | Add mutation-analysis artifact for login/register defect exposure. | Target 2 Deliverables | No dedicated mutation-analysis artifact for this defect is present. | Pending |
-| David Cho | Add fix-verification tests for login/register if code fix is applied. | Target 2 Deliverables | Baseline endpoint tests exist, but no explicit fix-verification set is present. | Pending |
-| Eduardo Rosales | Implement hardware checkout/checkin formal pytest suite. | Target 3 Deliverables | No hardware-specific pytest files are currently present in testing folder. | Pending |
-| Eduardo Rosales | Add hardware CFG and prime-path/edge-pair test design artifact. | Target 3 Deliverables | No hardware CFG artifact is currently present in testing docs. | Pending |
-| Eduardo Rosales | Add CACC and input partition model for availability predicate. | Target 3 Deliverables | No hardware CACC or partition model artifact is currently present. | Pending |
-| Eduardo Rosales | Generate hardware coverage report and store under coverage-reports. | Target 3 Deliverables | No hardware structural coverage file is currently present. | Pending |
-| Whole Team | Complete remaining milestone phases (structural completion, partitioning, mutation/RIP, report packaging). | Milestones 3-6 | Encrypt work is advanced; hardware and auth-defect RIP artifacts are not complete at the same level. | Pending |
+| Anita Woodford | Add `_encrypt` mutation analysis + RIP artifacts | Target 1 Deliverables | No mutation-analysis folder or RIP worksheet yet | Pending |
+| Anita Woodford | Integrate all module outputs into final report (coverage tables + defects) | Milestone 6 | Artifacts exist but not consolidated into single report | Pending |
+| David Cho | Create RIP worksheet for login/register defects | Target 2 Deliverables | No RIP worksheet artifact | Pending |
+| David Cho | Add mutation-analysis artifact for login/register defect exposure | Target 2 Deliverables | No mutation artifact present | Pending |
+| David Cho | Add fix-verification tests | Target 2 Deliverables | No verification tests present | Pending |
+| Eduardo Rosales | Add hardware CFG + prime-path/edge-pair artifact | Target 3 Deliverables | No hardware CFG artifact | Pending |
+| Eduardo Rosales | Add CACC + input partition model (hardware) | Target 3 Deliverables | No logic/partition artifact | Pending |
+| Eduardo Rosales | Generate hardware coverage report | Target 3 Deliverables | No coverage file | Pending |
+| Whole Team | Final report + presentation bundle | Milestone 6 | Not integrated | Pending |
 
-## Quick Checklist (Action Items)
+---
 
-### Anita Woodford
+# Quick Checklist (Action Items)
 
-- [ ] Add `_encrypt` mutant list in `testing/mutation-analysis`.
-- [ ] Add `_encrypt` RIP worksheet in `testing/mutation-analysis`.
-- [ ] Add `_encrypt` killed/survived summary table in `testing/mutation-analysis`.
-- [ ] Add short mutation summary for `_encrypt` in `docs/testingDoc/encrypt-analysis.md`.
-- [ ] Consolidate final report package with before/after coverage table and defect summary.
+## Anita Woodford
+- [ ] Add `_encrypt` mutation analysis
+- [ ] Add `_encrypt` RIP worksheet
+- [ ] Add mutation summary to `encrypt-analysis.md`
+- [ ] Build final report (coverage + defects)
 
-### David Cho
+## David Cho
+- [ ] Create RIP worksheet (login/register defects)
+- [ ] Add mutation analysis
+- [ ] Add fix verification tests
 
-- [ ] Create RIP worksheet for `login/register` userId plaintext defect.
-- [ ] Add mutation-analysis artifact for `login/register` defect exposure.
-- [ ] Add fix-verification tests for `login/register` if code fix is applied.
+## Eduardo Rosales
+- [ ] Create hardware CFG
+- [ ] Add prime path / edge-pair design
+- [ ] Add CACC for availability predicate
+- [ ] Add input partition model
+- [ ] Generate hardware coverage report
 
-### Eduardo Rosales
+## Whole Team
+- [ ] Complete Milestones 3–6 deliverables
+- [ ] Merge all artifacts into final report + presentation
 
-- [ ] Implement `hardware` checkout/checkin pytest suite.
-- [ ] Add hardware CFG + edge-pair/prime-path artifact.
-- [ ] Add CACC + input partition model for availability predicate.
-- [ ] Generate and save hardware coverage report in `testing/coverage-reports`.
+---
 
-### Whole Team
+# Completed Work (Comprehensive Contributions)
 
-- [ ] Finish Milestones 3-6 deliverables as a complete package.
-- [ ] Merge module evidence into one final report and presentation bundle.
+## Anita Woodford — Target 1 (_encrypt) and Project Leadership
 
-## Completed So Far
+| Work Item | Evidence Artifact | Status |
+|---|---|---|
+| Project proposal start | Project Proposal document | Completed |
+| Project plan creation and scope definition | `ProjectPlan.docx` | Completed |
+| Repository structure and testing framework setup | testing + docs directories | Completed |
+| Baseline test suite for `_encrypt` | `test_auth_encrypt.py` | Completed |
+| Structural test suite (CFG-based, 9 tests) | `test_app_encrypt_structural.py` | Completed |
+| Control Flow Graph (CFG) construction (nodes, edges, prime paths) | `encrypt-analysis.md` | Completed |
+| Node, Edge, and Prime Path coverage requirements | `encrypt-analysis.md` | Completed |
+| Infeasible branch proof (dir_shift predicate) | `encrypt-analysis.md` | Completed |
+| CACC logic coverage analysis | `encrypt-analysis.md` | Completed |
+| Input Domain Model (input_text, num_shift, dir_shift) | `encrypt_idm.md` | Completed |
+| Base Choice Coverage model | `encrypt_base_choice.md` | Completed |
+| Partition-based pytest suite | `test_encrypt_partition.py` | Completed |
+| Behavior analysis (expected vs observed behavior) | `encrypt_behavior_analysis.md` | Completed |
+| Coverage execution and report generation | `testing/coverage-reports/` | Completed |
+| Coverage improvement analysis (42% → 49% → ~88%) | analysis documentation | Completed |
+| Combined auth coverage execution | `auth-baseline-combined-coverage.txt` | Completed |
+| Documentation refinement and alignment with testing criteria | `encrypt-analysis.md` updates | Completed |
 
-| Work Item | Contributor | Evidence Artifact | Current Status |
-|---|---|---|---|
-| Project planning and scope definition | Anita Woodford | docs/testingDoc/ProjectPlan.docx | Completed |
-| Repository setup and project structure organization | Anita Woodford | testing, docs/testingDoc, docs/design folders and test/report structure | Completed |
-| Baseline auth endpoint tests for register and login | David Cho (git author: chodavey) | testing/baseline-tests/test_auth.py, commit 001eb9a | Completed |
-| Baseline tests for _encrypt function | Anita Woodford | testing/baseline-tests/test_auth_encrypt.py, commit b5b459d | Completed |
-| Structural tests for _encrypt function | Anita Woodford | testing/structural-test/test_app_encrypt_structural.py, commit aee6bcd | Completed |
-| Encrypt analysis documentation updates | Anita Woodford | docs/testingDoc/encrypt-analysis.md, commits 3216757 and aee6bcd | Completed |
-| Combined auth baseline coverage run (encrypt + login/register) | Anita Woodford + David Cho artifacts combined | testing/coverage-reports/auth-baseline-combined-coverage.txt | Completed |
-| Hardware checkout/checkin formal testing target | Eduardo Rosales | Assignment listed in docs/testingDoc/ProjectPlan.docx | In Progress |
-| Final integrated report packaging and presentation bundle | Team | docs/testingDoc + testing/coverage-reports final packaging | In Progress |
+### Summary of Contributions
 
-## Notes
+- Designed and implemented all required testing techniques for Target 1:
+  - Graph coverage (CFG, node, edge, prime path)
+  - Logic coverage (CACC)
+  - Input space partitioning (IDM and Base Choice)
+- Identified and formally proved a critical defect:
+  - unsatisfiable predicate in `_encrypt`
+- Achieved full feasible structural coverage for `_encrypt`
+- Established project structure, documentation, and testing workflow
 
-- Coverage files for auth module are module-level measurements for backend/app/routes/auth.py, which includes _encrypt, login, and register.
-- Encrypt-focused baseline and structural runs are valid for function-focused progress, even though coverage reports show auth.py as the measured module.
+**Status:**  
+Target 1 is almost complete except for mutation and RIP analysis (final requirement)
+
+---
+
+## David Cho — Target 2 (login and register)
+
+| Work Item | Evidence Artifact | Status |
+|---|---|---|
+| Baseline auth tests | baseline test files | Completed |
+| Input Domain Model (login) | `login_idm.md` | Completed |
+| Input Domain Model (register) | `register_idm.md` | Completed |
+| Base Choice Coverage (login) | `login_base_choice.md` | Completed |
+| Base Choice Coverage (register) | `register_base_choice.md` | Completed |
+| Partition pytest suite (login) | `test_login_partition.py` | Completed |
+| Partition pytest suite (register) | `test_register_partition.py` | Completed |
+| Behavior analysis (login) | `login_behavior_analysis.md` | Completed |
+| Behavior analysis (register) | `register_behavior_analysis.md` | Completed |
+| Defect identification and documentation | behavior analysis files | Completed |
+
+### Defects Identified
+
+- login:
+  - empty string treated as valid input
+- register:
+  - accepts empty and null userId
+  - accepts empty password
+  - crashes on null password
+
+**Status:**  
+Substantially complete  
+Remaining: mutation analysis, RIP worksheet, fix verification tests
+
+---
+
+## Eduardo Rosales — Target 3 (hardware)
+
+| Work Item | Evidence Artifact | Status |
+|---|---|---|
+| Hardware baseline tests (checkout/checkin) | hardware test file | Completed |
+| Hardware testing scope defined | `ProjectPlan.docx` | Completed |
+
+**Status:**  
+Baseline completed  
+Remaining: CFG, CACC, partitioning, coverage report
+
+---
+
+# Notes
+
+- Coverage is measured at the module level (`auth.py`) and includes `_encrypt`, `login`, and `register`
+- Structural testing focuses on `_encrypt`, so uncovered lines belong to other functions
+- All feasible paths in `_encrypt` are fully covered; infeasible branch is correctly excluded
+
+---
+
+# Final Status
+
+## Completed
+- Structural testing (CFG, node, edge, prime paths) _encrypt()
+- Input space partitioning (all auth modules)
+- CACC logic coverage  _encrypt()
+- Behavior analysis
+- Coverage improvement demonstrated
+
+## Remaining (Critical)
+- Mutation and RIP analysis (required by project plan)
+- Hardware formal testing artifacts
+- Final report integration and presentation
+
+---
+
+# Project Status
+
+Approximately 85–90% complete
+
