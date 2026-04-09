@@ -1,8 +1,5 @@
 ============================= test session starts ==============================
-platform darwin -- Python 3.12.3, pytest-9.0.2, pluggy-1.6.0 -- /Users/anitawoodford/Library/Mobile Documents/com~apple~CloudDocs/Desktop/SCHOOL/ECETesting/TeamProject/Software-testing-cloud-native-project/backend/.venv/bin/python
-cachedir: .pytest_cache
-rootdir: /Users/anitawoodford/Library/Mobile Documents/com~apple~CloudDocs/Desktop/SCHOOL/ECETesting/TeamProject/Software-testing-cloud-native-project
-plugins: cov-7.0.0
+platform darwin -- Python 3.12.3, pytest-9.0.2, pluggy-1.6.0 -- 
 collecting ... collected 4 items
 
 testing/mutation-analysis/test_encrypt_mutation.py::test_num_shift_boundary_mutation PASSED [ 25%]
