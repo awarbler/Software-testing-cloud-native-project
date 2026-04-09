@@ -1,6 +1,7 @@
 # ============================================================
 # Baseline Test Suite for _encrypt()
 # Course: EE360T Software Testing
+# File: test_auth_encrypt.py
 # ============================================================
 """
 Baseline test  for _encrypt function in auth module
