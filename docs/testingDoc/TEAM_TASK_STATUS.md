@@ -11,9 +11,9 @@ has already been completed in the repository.
 |---|---|---|---|---|---|
 | Anita Woodford | Add `_encrypt` mutation analysis + RIP artifacts | Target 1 Deliverables | No mutation-analysis folder or RIP worksheet yet | Pending |
 | Anita Woodford | Integrate all module outputs into final report (coverage tables + defects) | Milestone 6 | Artifacts exist but not consolidated into single report | Pending |
-| David Cho | Create RIP worksheet for the login/register userId plaintext defect. | Target 2 Deliverables | No RIP worksheet artifact is present in testing docs. | Pending | 4/8/2026 |
-| David Cho | Add mutation-analysis artifact for login/register defect exposure. | Target 2 Deliverables | No dedicated mutation-analysis artifact for this defect is present. | Pending | 4/8/2026 |
-| David Cho | Add fix-verification tests for login/register if code fix is applied. | Target 2 Deliverables | Baseline endpoint tests exist, but no explicit fix-verification set is present. | Pending | 4/8/2026 |
+| David Cho | Create RIP worksheet for the login/register userId plaintext defect. | Target 2 Deliverables | under testing/mutation-analysis/auth_rip_worksheet.md | Completed | 4/8/2026 |
+| David Cho | Add mutation-analysis artifact for login/register defect exposure. | Target 2 Deliverables | No dedicated mutation-analysis artifact for this defect is present. | Completed | 4/8/2026 |
+| David Cho | Add fix-verification tests for login/register if code fix is applied. | Target 2 Deliverables | Baseline endpoint tests exist, but no explicit fix-verification set is present. | Omitted (determined to be out of project scope) | 4/8/2026 |
 | Eduardo Rosales | Implement hardware checkout/checkin formal pytest suite. | Target 3 Deliverables | No hardware-specific pytest files are currently present in testing folder. | Pending | 4/8/2026 |
 | Eduardo Rosales | Add hardware CFG and prime-path/edge-pair test design artifact. | Target 3 Deliverables | No hardware CFG artifact is currently present in testing docs. | Pending | 4/9/2026 |
 | Eduardo Rosales | Add CACC and input partition model for availability predicate. | Target 3 Deliverables | No hardware CACC or partition model artifact is currently present. | Pending | 4/9/2026 |
@@ -31,9 +31,10 @@ has already been completed in the repository.
 - [ ] Build final report (coverage + defects)
 
 ## David Cho
-- [ ] Create RIP worksheet (login/register defects)
-- [ ] Add mutation analysis
-- [ ] Add fix verification tests
+- [x] Create RIP worksheet (login/register defects)
+- [x] Add mutation analysis
+- [x] Add coverage reports (baseline + partition)
+- ~~[ ] Add fix verification tests~~ — out of scope per RQ
 
 ## Eduardo Rosales
 - [ ] Create hardware CFG
@@ -92,7 +93,7 @@ Target 1 is almost complete except for mutation and RIP analysis (final requirem
 
 | Work Item | Evidence Artifact | Status |
 |---|---|---|
-| Baseline auth tests | baseline test files | Completed |
+| Baseline auth tests | `testing/baseline-tests/test_auth.py` | Completed |
 | Input Domain Model (login) | `login_idm.md` | Completed |
 | Input Domain Model (register) | `register_idm.md` | Completed |
 | Base Choice Coverage (login) | `login_base_choice.md` | Completed |
@@ -102,19 +103,38 @@ Target 1 is almost complete except for mutation and RIP analysis (final requirem
 | Behavior analysis (login) | `login_behavior_analysis.md` | Completed |
 | Behavior analysis (register) | `register_behavior_analysis.md` | Completed |
 | Defect identification and documentation | behavior analysis files | Completed |
+| Mutation comparison (baseline vs partition) | `testing/mutation-analysis/auth-register-login/` | Completed |
+| RIP worksheet | `testing/mutation-analysis/auth_rip_worksheet.md` | Completed |
+| Coverage report (baseline suite) | `testing/coverage-reports/auth-baseline-coverage.txt` | Completed |
+| Coverage report (partition suite) | `testing/coverage-reports/auth-partition-coverage.txt` | Completed |
+| Fix verification tests | N/A — out of scope per RQ | N/A |
 
 ### Defects Identified
 
 - login:
-  - empty string treated as valid input
+  - empty string userId/password bypasses None guard, misclassified as 401 instead of 400
 - register:
-  - accepts empty and null userId
-  - accepts empty password
-  - crashes on null password
+  - accepts empty string userId (stored as-is, returns 201)
+  - accepts null userId (stored as None, returns 201)
+  - accepts empty string password (stored as empty, returns 201)
+  - crashes on null password (AttributeError in `_encrypt`, returns 500)
+
+### Mutation Scores (auth.py)
+
+| Suite | Killed | Survived | Score |
+|---|---|---|---|
+| Baseline — `test_auth.py` (8 tests) | 77 | 44 | 63.6% |
+| Partition — register + login (17 tests) | 75 | 46 | 62.0% |
+
+### Coverage (auth.py, with branch coverage)
+
+| Suite | Statements | Missed | Coverage |
+|---|---|---|---|
+| Baseline | 60 | 7 | 84% |
+| Partition | 60 | 8 | 81% |
 
 **Status:**  
-Substantially complete  
-Remaining: mutation analysis, RIP worksheet, fix verification tests
+Complete. Fix verification tests determined out of scope — RQ focuses on defect detection comparison, not remediation.
 
 ---
 

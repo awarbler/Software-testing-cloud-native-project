@@ -31,3 +31,4 @@ yarn-debug.log*
 pnpm-debug.log*
 
 .coverage
+.mutmut-cache
