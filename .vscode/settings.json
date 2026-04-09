@@ -1,15 +1,22 @@
 {
     "cSpell.words": [
+        "anitawoodford",
         "CACC",
+        "cachedir",
         "checkin",
         "chodavey",
+        "crypted",
+        "elif",
         "isascii",
         "mypassword",
         "mypasswordé",
         "mypy",
+        "pluggy",
         "pycache",
         "pytest",
         "PYTHONPATH",
+        "rootdir",
+        "rtype",
         "venv"
     ],
     "python.testing.pytestArgs": [

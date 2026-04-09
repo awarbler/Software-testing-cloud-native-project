@@ -1,6 +1,7 @@
 # ============================================================
 # Structural Test Suite for _encrypt()
 # Course: EE360T Software Testing
+# File: test_app_encrypt_structural.py
 # ============================================================
 import pytest
 import sys
@@ -145,8 +146,8 @@ def test_normal_no_wrap():
     Prime Path: P4
     Expected: Valid string returned
     """
-    result = _encrypt("hello", 1, 1) # $ is allowed
-    assert len(result) == len("hello") # length should be the same as input
+    result = _encrypt("mypassword", 1, 1) # $ is allowed
+    assert len(result) == len("mypassword") # length should be the same as input
    
 # Test 5 : N13 -> N14 Wrap High branch boundary test
 def test_wrap_high():
@@ -212,8 +213,8 @@ def test_multi_character_loop():
     Edge: E20 
     Prime Path: Loop cycle behavior (supports P4–P6 execution paths)
     """
-    result = _encrypt("hello", 1, 1) # $ is allowed
-    assert len(result)== len("hello")
+    result = _encrypt("mypassword#S", 1, 1) # $ is allowed
+    assert len(result)== len("mypassword#$")
 
 # Test 9: N17-> N11 loop test 
 def test_multiple_iterations_loop():
@@ -241,5 +242,5 @@ def test_multiple_iterations_loop():
     Output length matches input length
     """
 
-    result = _encrypt("abcdef", 1, 1)
-    assert len(result) == len("abcdef")
+    result = _encrypt("mypassword", 1, 1)
+    assert len(result) == len("mypassword")

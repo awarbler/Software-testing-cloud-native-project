@@ -1,3 +1,9 @@
+# ============================================================
+# IDM Test Suite for _encrypt()
+# Course: EE360T Software Testing
+# File: test_encrypt_partition.py
+# ============================================================
+
 import pytest  # pytest is used to check for expected exceptions
 from app.routes.auth import _encrypt  # import the encryption function
 
