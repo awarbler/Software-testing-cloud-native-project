@@ -1,7 +1,6 @@
 ============================= test session starts ==============================
 platform darwin -- Python 3.12.3, pytest-9.0.2, pluggy-1.6.0
-rootdir: /Users/anitawoodford/Library/Mobile Documents/com~apple~CloudDocs/Desktop/SCHOOL/ECETesting/TeamProject/Software-testing-cloud-native-project
-plugins: cov-7.0.0
+
 collected 2 items
 
 testing/cacc-analysis/test_encrypt_cacc.py ..                            [100%]
