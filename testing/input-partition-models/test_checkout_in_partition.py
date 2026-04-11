@@ -14,11 +14,11 @@ CHECKIN_URL = "/api/hardware/{id}/checkin"
 # -----------------------------------------------
 
 
-def test_ipo_checkout_base_valid(client, checkout_test_data):
+def test_isp_checkout_base_valid(client, checkout_test_data):
     """
-    T-IPO-CO-BASE | BCC Base | Partition: C1=b3 (amount=1), C2=b1 (assigned), C3=b1 (valid project)
+    T-ISP-CO-BASE | BCC Base | Partition: C1=b3 (amount=1), C2=b1 (assigned), C3=b1 (valid project)
     Base case: all three characteristics at base choice — minimum valid amount, authorized user, existing project.
-    Expected: 200; available==9 (10−1)
+    Expected: 200; available==9 (10-1)
     """
     hw_id, project_id, user_id = checkout_test_data
 
@@ -33,9 +33,9 @@ def test_ipo_checkout_base_valid(client, checkout_test_data):
     assert project_id in body["assignedProjects"]
 
 
-def test_ipo_checkout_amount_negative(client, valid_hardware):
+def test_isp_checkout_amount_negative(client, valid_hardware):
     """
-    T-IPO-CO-C1-b1 | BCC Non-base | Partition: C1=b1 (amount<0), C2=b1, C3=b1
+    T-ISP-CO-C1-b1 | BCC Non-base | Partition: C1=b1 (amount<0), C2=b1, C3=b1
     Base case: negative amount; Pydantic rejects before any DB lookup (amount >= 1 required).
     Expected: 400 ValidationError
     """
@@ -49,9 +49,9 @@ def test_ipo_checkout_amount_negative(client, valid_hardware):
     assert body["error"] == "Validation failed"
 
 
-def test_ipo_checkout_amount_zero(client, valid_hardware):
+def test_isp_checkout_amount_zero(client, valid_hardware):
     """
-    T-IPO-CO-C1-b2 | BCC Non-base | Partition: C1=b2 (amount==0), C2=b1, C3=b1
+    T-ISP-CO-C1-b2 | BCC Non-base | Partition: C1=b2 (amount==0), C2=b1, C3=b1
     Base case: zero amount at the lower domain boundary; Pydantic rejects before the DB guard.
     Expected: 400 ValidationError
     """
@@ -64,9 +64,9 @@ def test_ipo_checkout_amount_zero(client, valid_hardware):
     assert response.get_json()["error"] == "Validation failed"
 
 
-def test_ipo_checkout_amount_exact_capacity(client, fake_hardware, fake_projects, fake_users, valid_user):
+def test_isp_checkout_amount_exact_capacity(client, fake_hardware, fake_projects, fake_users, valid_user):
     """
-    T-IPO-CO-C1-b4 | BCC Non-base | Partition: C1=b4 (amount==available), C2=b1, C3=b1
+    T-ISP-CO-C1-b4 | BCC Non-base | Partition: C1=b4 (amount==available), C2=b1, C3=b1
     Base case: amount equals all available units (boundary of valid domain); guard (5<5) is False, checkout proceeds.
     Expected: 200; available==0
     """
@@ -96,9 +96,9 @@ def test_ipo_checkout_amount_exact_capacity(client, fake_hardware, fake_projects
     assert response.get_json()["available"] == 0
 
 
-def test_ipo_checkout_amount_over_capacity(client, fake_hardware, fake_projects, fake_users, valid_user):
+def test_isp_checkout_amount_over_capacity(client, fake_hardware, fake_projects, fake_users, valid_user):
     """
-    T-IPO-CO-C1-b5 | BCC Non-base | Partition: C1=b5 (amount>available), C2=b1, C3=b1
+    T-ISP-CO-C1-b5 | BCC Non-base | Partition: C1=b5 (amount>available), C2=b1, C3=b1
     Base case: requested amount exceeds available stock; availability guard (5<8) fires.
     Expected: 400 "Insufficient availability. Only 5 units available"
     """
@@ -128,9 +128,9 @@ def test_ipo_checkout_amount_over_capacity(client, fake_hardware, fake_projects,
     assert "Insufficient availability" in response.get_json()["error"]
 
 
-def test_ipo_checkout_user_not_assigned(client, fake_hardware, fake_projects, fake_users, valid_user):
+def test_isp_checkout_user_not_assigned(client, fake_hardware, fake_projects, fake_users, valid_user):
     """
-    T-IPO-CO-C2-b2 | BCC Non-base | Partition: C1=b3, C2=b2 (user not assigned), C3=b1
+    T-ISP-CO-C2-b2 | BCC Non-base | Partition: C1=b3, C2=b2 (user not assigned), C3=b1
     Base case: valid project exists but the requesting user is not in assignedUsers.
     Expected: 403 "User is not assigned to this project"
     """
@@ -160,9 +160,9 @@ def test_ipo_checkout_user_not_assigned(client, fake_hardware, fake_projects, fa
     assert "User is not assigned to this project" in response.get_json()["error"]
 
 
-def test_ipo_checkout_project_invalid(client, valid_hardware):
+def test_isp_checkout_project_invalid(client, valid_hardware):
     """
-    T-IPO-CO-C3-b2 | BCC Non-base | Partition: C1=b3, C2=b1, C3=b2 (project not in DB)
+    T-ISP-CO-C3-b2 | BCC Non-base | Partition: C1=b3, C2=b1, C3=b2 (project not in DB)
     Base case: project ID does not match any document; C2 is unobservable (constraint: C2 irrelevant when C3=b2).
     Expected: 404 "Project not found"
     """
@@ -180,9 +180,9 @@ def test_ipo_checkout_project_invalid(client, valid_hardware):
 # -----------------------------------------------
 
 
-def test_ipo_checkin_base_valid(client, checkin_test_data):
+def test_isp_checkin_base_valid(client, checkin_test_data):
     """
-    T-IPO-CI-BASE | BCC Base | Partition: C1=b3 (amount=1), C2=b1 (assigned), C3=b1 (valid project)
+    T-ISP-CI-BASE | BCC Base | Partition: C1=b3 (amount=1), C2=b1 (assigned), C3=b1 (valid project)
     Base case: partial checkin (1 of 3 checked-out units returned); $inc path runs, entry amount decremented.
     Expected: 200; available==8 (7+1)
     """
