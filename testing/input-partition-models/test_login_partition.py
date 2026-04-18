@@ -109,17 +109,17 @@ def test_login_t1_userid_omitted(client):
     assert body["ok"] is False
 
 
+@pytest.mark.xfail(reason="D-5: empty string userId bypasses None guard; DB queried for userId='' with no match, returns 401 (invalid credential) instead of 400 (malformed input)")
 def test_login_t2_userid_empty_string(client):
-    """T2 (C1:b3, C2:b1, C3:b1): empty string userId bypasses the None guard.
+    """T2 (C1:b3, C2:b1, C3:b1): empty string userId should be rejected as malformed input.
 
     DEFECT: data.get("userId") returns "" which is not None, so the guard passes.
-    The DB is queried for userId="" and finds no match, returning 401 instead of
-    400. An empty string is misclassified as an invalid credential rather than a
-    malformed input.
+    The DB is queried for userId="" and finds no match — empty string is
+    misclassified as an invalid credential rather than a malformed input.
     """
     response = client.post(LOGIN_URL, json={"userId": "", "password": "mypassword"})
 
-    assert response.status_code == 401  # actual behavior — misclassification
+    assert response.status_code == 400
     body = response.get_json()
     assert body["ok"] is False
 
@@ -150,18 +150,19 @@ def test_login_t4_password_omitted(client):
     assert body["ok"] is False
 
 
+@pytest.mark.xfail(reason="D-6: empty string password bypasses None guard; _encrypt('') queried against DB with no match, returns 401 (invalid credential) instead of 400 (malformed input)")
 def test_login_t5_password_empty_string(client):
-    """T5 (C1:b1, C2:b3, C3:b1): empty string password bypasses the None guard.
+    """T5 (C1:b1, C2:b3, C3:b1): empty string password should be rejected as malformed input.
 
     DEFECT: data.get("password") returns "" which is not None, so the guard passes.
     _encrypt("") returns "". The DB is queried with the encrypted empty string and
-    finds no match, returning 401 instead of 400. Same misclassification as T2.
+    finds no match — same misclassification as T2.
     """
     client.post(REGISTER_URL, json={"userId": "carol", "password": "mypassword"})
 
     response = client.post(LOGIN_URL, json={"userId": "carol", "password": ""})
 
-    assert response.status_code == 401  # actual behavior — misclassification
+    assert response.status_code == 400
     body = response.get_json()
     assert body["ok"] is False
 
