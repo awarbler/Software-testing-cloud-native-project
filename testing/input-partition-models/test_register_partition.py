@@ -105,31 +105,28 @@ def test_register_t1_userid_omitted(client):
     assert "userId" in body["error"]
 
 
+@pytest.mark.xfail(reason="D-1: empty string userId bypasses field guard (field in data checks key presence only); returns 201 instead of 400")
 def test_register_t2_userid_empty_string(client):
-    """T2 (C1:b3, C2:b1, C3:b1): empty string userId bypasses the field check.
+    """T2 (C1:b3, C2:b1, C3:b1): empty string userId should be rejected as malformed input.
 
     DEFECT: the field guard only checks key presence (`field in data`), not value
     validity. An empty string passes and is stored as the userId, producing 201.
-    Expected behavior would be 400.
     """
     response = client.post(REGISTER_URL, json={"userId": "", "password": "secure123"})
 
-    assert response.status_code == 201  # actual behavior — validation gap
-    body = response.get_json()
-    assert body["user"]["userId"] == ""
+    assert response.status_code == 400
 
 
+@pytest.mark.xfail(reason="D-2: null userId bypasses field guard (field in data checks key presence only); null stored in DB, returns 201 instead of 400")
 def test_register_t3_userid_null(client):
-    """T3 (C1:b4, C2:b1, C3:b1): null userId bypasses the field check.
+    """T3 (C1:b4, C2:b1, C3:b1): null userId should be rejected as malformed input.
 
     DEFECT: the field guard only checks key presence. A null value passes and
-    is stored as None, producing 201. Expected behavior would be 400.
+    is stored as None in the DB, producing 201.
     """
     response = client.post(REGISTER_URL, json={"userId": None, "password": "secure123"})
 
-    assert response.status_code == 201  # actual behavior — validation gap
-    body = response.get_json()
-    assert body["user"]["userId"] is None
+    assert response.status_code == 400
 
 
 # ---------------------------------------------------------------------------
@@ -145,30 +142,30 @@ def test_register_t4_password_omitted(client):
     assert "password" in body["error"]
 
 
+@pytest.mark.xfail(reason="D-3: empty string password bypasses field guard; _encrypt('') stored as password, returns 201 instead of 400")
 def test_register_t5_password_empty_string(client):
-    """T5 (C1:b1, C2:b3, C3:b1): empty string password bypasses the field check.
+    """T5 (C1:b1, C2:b3, C3:b1): empty string password should be rejected as malformed input.
 
     DEFECT: the field guard only checks key presence. An empty string passes,
     _encrypt("") returns "", and the user is stored with an empty password,
-    producing 201. Expected behavior would be 400.
+    producing 201.
     """
     response = client.post(REGISTER_URL, json={"userId": "alice", "password": ""})
 
-    assert response.status_code == 201  # actual behavior — validation gap
-    body = response.get_json()
-    assert body["user"]["userId"] == "alice"
+    assert response.status_code == 400
 
 
-def test_register_t6_password_null_crashes(client):
-    """T6 (C1:b1, C2:b4, C3:b1): null password bypasses the field check and crashes.
+@pytest.mark.xfail(reason="D-4: null password bypasses field guard; _encrypt(None) calls None.isascii() raising AttributeError; returns 500 crash instead of 400")
+def test_register_t6_password_null(client):
+    """T6 (C1:b1, C2:b4, C3:b1): null password should be rejected as malformed input.
 
     DEFECT: the field guard only checks key presence. A null value passes to
-    _encrypt(None, 3, 1), which calls None.isascii() and raises AttributeError.
-    The server returns 500 with no error message. Expected behavior would be 400.
+    _encrypt(None), which calls None.isascii() and raises AttributeError, crashing
+    with 500.
     """
     response = client.post(REGISTER_URL, json={"userId": "alice", "password": None})
 
-    assert response.status_code == 500  # actual behavior — unhandled crash
+    assert response.status_code == 400
 
 
 # ---------------------------------------------------------------------------
